@@ -440,13 +440,19 @@
         const password = document.getElementById('login-password').value;
 
         if (email && password) {
-            // Store login info in localStorage for demo
+            // Store login info in localStorage
             localStorage.setItem('userEmail', email);
             localStorage.setItem('isLoggedIn', 'true');
-            alert('Login successful! Welcome back.');
+
+            // If no userName exists, extract from email
+            if (!localStorage.getItem('userName')) {
+                const nameFromEmail = email.split('@')[0];
+                // Capitalize first letter
+                const formattedName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
+                localStorage.setItem('userName', formattedName);
+            }
+
             window.location.href = 'index.html';
-        } else {
-            alert('Please fill in all fields.');
         }
         return false;
     }
@@ -461,27 +467,23 @@
         const confirmPassword = document.getElementById('register-confirm-password').value;
 
         if (!name || !email || !phone || !password || !confirmPassword) {
-            alert('Please fill in all fields.');
             return false;
         }
 
         if (password !== confirmPassword) {
-            alert('Passwords do not match. Please try again.');
             return false;
         }
 
         if (password.length < 8) {
-            alert('Password must be at least 8 characters long.');
             return false;
         }
 
-        // Store registration info in localStorage for demo
+        // Store registration info in localStorage
         localStorage.setItem('userName', name);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userPhone', phone);
         localStorage.setItem('isLoggedIn', 'true');
 
-        alert('Account created successfully! You are now logged in.');
         window.location.href = 'index.html';
         return false;
     }

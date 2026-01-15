@@ -234,46 +234,37 @@
         .measurements-display table { width: 100%; }
         .measurements-display td { padding: 2px 5px; }
 
-        /* User Dropdown */
-        .user-dropdown {
-            position: relative;
-            display: inline-block;
-        }
+        /* User Dropdown Styles */
+        .user-dropdown { position: relative; display: inline-block; }
         .user-dropdown-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px 10px;
-            color: #333;
+            display: flex; align-items: center; gap: 8px;
+            background: none; border: none; cursor: pointer;
+            padding: 8px 12px; color: #333; font-size: 14px;
+            border-radius: 25px; transition: all 0.3s ease;
         }
+        .user-dropdown-btn:hover { background-color: rgba(212, 175, 55, 0.1); }
+        .user-dropdown-btn .fa-user-circle { font-size: 22px; color: #d4af37; }
+        .user-dropdown-btn .dropdown-arrow { font-size: 10px; transition: transform 0.3s; }
+        .user-dropdown.active .dropdown-arrow { transform: rotate(180deg); }
         .user-dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background: white;
-            min-width: 180px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 8px;
-            z-index: 1000;
-            overflow: hidden;
+            display: none; position: absolute; right: 0; top: calc(100% + 5px);
+            background: white; min-width: 200px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 10px; z-index: 1000; overflow: hidden; border: 1px solid #eee;
         }
-        .user-dropdown:hover .user-dropdown-content,
-        .user-dropdown.active .user-dropdown-content { display: block; }
+        .user-dropdown.active .user-dropdown-content { display: block; animation: dropdownFade 0.2s ease; }
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .user-dropdown-content a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 15px;
-            color: #333;
-            text-decoration: none;
-            transition: background 0.2s;
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 18px; color: #333; text-decoration: none;
+            transition: all 0.2s; font-size: 14px;
         }
-        .user-dropdown-content a:hover { background: #f5f5f5; }
+        .user-dropdown-content a:hover { background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent); color: #d4af37; }
         .user-dropdown-content a i { width: 20px; color: #d4af37; }
+        .user-dropdown-content a:first-child { border-bottom: 1px solid #eee; }
 
         /* Toast Notification */
         .toast {
@@ -295,6 +286,16 @@
             to { transform: translateX(0); opacity: 1; }
         }
     </style>
+
+    <!-- MediaPipe Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+
+    <!-- Custom MediaPipe Files -->
+    <link rel="stylesheet" href="mediapipe-pose/css/mediapipe-styles.css">
+    <script src="mediapipe-pose/js/mediapipe-pose.js"></script>
 </head>
 <body>
     <!-- Side Navigation -->
@@ -366,14 +367,13 @@
                     </a>
                 </div>
                 <div class="user-dropdown" id="user-dropdown" style="display: none;">
-                    <button class="user-dropdown-btn">
+                    <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
                         <i class="fas fa-user-circle"></i>
                         <span class="user-name"></span>
-                        <i class="fas fa-chevron-down"></i>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
                     </button>
                     <div class="user-dropdown-content">
-                        <a href="#" onclick="return false;"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                        <a href="#" onclick="showOrderHistory(); return false;"><i class="fas fa-history"></i> Order History</a>
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                         <a href="#" onclick="handleLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
@@ -419,7 +419,61 @@
         </div>
     </section>
 
-    <!-- Measurement Modal -->
+    <!-- Measurement Options Modal -->
+    <div id="measurement-options-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="close-modal">&times;</button>
+            <h3 style="text-align: center; margin-bottom: 25px;">
+                <i class="fas fa-ruler-combined" style="color: #d4af37;"></i> Choose Measurement Method
+            </h3>
+            <input type="hidden" id="options-measurement-index" value="">
+
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button id="webcam-measurement-option" class="measurement-option-btn" style="
+                    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+                    color: white;
+                    border: none;
+                    padding: 20px;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+                ">
+                    <i class="fas fa-camera" style="font-size: 28px;"></i>
+                    <div style="text-align: left;">
+                        <strong style="display: block; font-size: 18px;">AI Webcam Measurement</strong>
+                        <span style="font-size: 13px; opacity: 0.9;">Auto-detect measurements using your camera</span>
+                    </div>
+                </button>
+
+                <button id="manual-measurement-option" class="measurement-option-btn" style="
+                    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                    color: white;
+                    border: none;
+                    padding: 20px;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    transition: all 0.3s ease;
+                ">
+                    <i class="fas fa-edit" style="font-size: 28px;"></i>
+                    <div style="text-align: left;">
+                        <strong style="display: block; font-size: 18px;">Manual Entry</strong>
+                        <span style="font-size: 13px; opacity: 0.9;">Enter measurements yourself</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Measurement Modal -->
     <div id="measurement-modal" class="modal">
         <div class="modal-content">
             <button class="close-modal">&times;</button>
@@ -477,6 +531,223 @@
             <button class="btn-save-measurements" onclick="saveMeasurements()">
                 <i class="fas fa-check"></i> Save Measurements
             </button>
+        </div>
+    </div>
+
+    <!-- Webcam Measurement Modal -->
+    <div id="webcam-measurement-modal" class="modal" style="z-index: 1002;">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <button class="close-modal" id="close-webcam-modal">&times;</button>
+            <h3 style="text-align: center; color: #333;">
+                <i class="fas fa-camera" style="color: #d4af37;"></i> AI Body Measurement
+            </h3>
+            <input type="hidden" id="webcam-measurement-item-index" value="">
+
+            <!-- Height Calibration -->
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #d4af37;">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">
+                    <i class="fas fa-ruler-vertical" style="color: #d4af37;"></i> Enter Your Height (for calibration)
+                </label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <select id="height-feet" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                        <option value="4">4 ft</option>
+                        <option value="5" selected>5 ft</option>
+                        <option value="6">6 ft</option>
+                        <option value="7">7 ft</option>
+                    </select>
+                    <select id="height-inches" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                        <option value="0">0 in</option>
+                        <option value="1">1 in</option>
+                        <option value="2">2 in</option>
+                        <option value="3">3 in</option>
+                        <option value="4">4 in</option>
+                        <option value="5">5 in</option>
+                        <option value="6" selected>6 in</option>
+                        <option value="7">7 in</option>
+                        <option value="8">8 in</option>
+                        <option value="9">9 in</option>
+                        <option value="10">10 in</option>
+                        <option value="11">11 in</option>
+                    </select>
+                    <button id="set-height-btn" style="padding: 10px 20px; background: #d4af37; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                        Set Height
+                    </button>
+                </div>
+            </div>
+
+            <!-- Camera Section -->
+            <div class="camera-section" style="position: relative; width: 100%; max-width: 640px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: #000;">
+                <video id="webcam-video" width="640" height="480" autoplay muted playsinline style="width: 100%; height: auto; display: block;"></video>
+            </div>
+
+            <!-- Status Indicators -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <strong style="display: block; margin-bottom: 5px; font-size: 12px; color: #856404;">
+                        <i class="fas fa-user"></i> POSE STATUS
+                    </strong>
+                    <span id="pose-indicator" style="font-size: 13px; color: #856404;">Click Start Camera to begin</span>
+                </div>
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; border-left: 4px solid #6c757d;">
+                    <strong style="display: block; margin-bottom: 5px; font-size: 12px; color: #495057;">
+                        <i class="fas fa-arrows-alt-v"></i> DISTANCE
+                    </strong>
+                    <div style="background: #e9ecef; border-radius: 4px; height: 8px; margin-top: 5px; overflow: hidden;">
+                        <div id="distance-fill" style="height: 100%; width: 0%; background: #28a745; transition: width 0.3s;"></div>
+                    </div>
+                    <span id="distance-text" style="font-size: 11px; color: #666;">Waiting...</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="webcam-controls" style="text-align: center; margin: 20px 0;">
+                <button id="start-camera-btn" class="webcam-btn" style="
+                    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                    color: white;
+                    border: none;
+                    padding: 14px 28px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 600;
+                    margin: 5px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    transition: all 0.3s;
+                ">
+                    <i class="fas fa-camera"></i> Start Camera
+                </button>
+
+                <button id="stop-camera-btn" class="webcam-btn" style="
+                    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+                    color: white;
+                    border: none;
+                    padding: 14px 28px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 600;
+                    margin: 5px;
+                    display: none;
+                    align-items: center;
+                    gap: 8px;
+                    transition: all 0.3s;
+                ">
+                    <i class="fas fa-stop"></i> Stop Camera
+                </button>
+
+                <button id="capture-measurement-btn" class="webcam-btn" style="
+                    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                    color: white;
+                    border: none;
+                    padding: 14px 28px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 600;
+                    margin: 5px;
+                    display: none;
+                    align-items: center;
+                    gap: 8px;
+                    transition: all 0.3s;
+                " disabled>
+                    <i class="fas fa-check"></i> Capture Measurements
+                </button>
+
+                <button id="retake-measurement-btn" class="webcam-btn" style="
+                    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                    color: white;
+                    border: none;
+                    padding: 14px 28px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 600;
+                    margin: 5px;
+                    display: none;
+                    align-items: center;
+                    gap: 8px;
+                    transition: all 0.3s;
+                ">
+                    <i class="fas fa-redo"></i> Retake
+                </button>
+            </div>
+
+            <!-- Measurement Results -->
+            <div id="webcam-results" style="display: none; margin-top: 20px; background: #d4edda; padding: 20px; border-radius: 10px; border: 1px solid #c3e6cb;">
+                <h4 style="color: #155724; text-align: center; margin-bottom: 15px;">
+                    <i class="fas fa-check-circle"></i> AI Measurements Detected
+                </h4>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Shoulder</label>
+                        <input type="number" id="webcam-shoulder" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Chest</label>
+                        <input type="number" id="webcam-chest" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Waist</label>
+                        <input type="number" id="webcam-waist" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Hip</label>
+                        <input type="number" id="webcam-hip" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Sleeve Length</label>
+                        <input type="number" id="webcam-sleeve_length" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Kameez Length</label>
+                        <input type="number" id="webcam-kameez_length" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Trouser Length</label>
+                        <input type="number" id="webcam-trouser_length" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                    <div class="webcam-result-field">
+                        <label style="font-size: 11px; color: #666; display: block;">Neck</label>
+                        <input type="number" id="webcam-neck" readonly style="width: 100%; padding: 8px; border: 1px solid #28a745; border-radius: 4px; background: white;">
+                    </div>
+                </div>
+
+                <button id="save-webcam-measurements-btn" style="
+                    width: 100%;
+                    margin-top: 20px;
+                    padding: 14px;
+                    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    transition: all 0.3s;
+                ">
+                    <i class="fas fa-save"></i> Save AI Measurements
+                </button>
+            </div>
+
+            <!-- Instructions -->
+            <div style="margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 8px;">
+                <h5 style="margin: 0 0 10px 0; color: #495057;"><i class="fas fa-info-circle"></i> Instructions</h5>
+                <ol style="margin: 0; padding-left: 20px; color: #666; font-size: 13px; line-height: 1.8;">
+                    <li>Enter your height and click "Set Height"</li>
+                    <li>Click "Start Camera" and allow camera access</li>
+                    <li>Stand 5-6 feet away, facing the camera</li>
+                    <li>Keep your full body visible (head to feet)</li>
+                    <li>Wait for calibration to complete</li>
+                    <li>Click "Capture Measurements" when ready</li>
+                </ol>
+            </div>
         </div>
     </div>
 
@@ -626,11 +897,25 @@
         }
     }
 
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('user-dropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('user-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+
     function handleLogout() {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('userName');
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userPhone');
+        localStorage.removeItem('shoppingCart');
+        localStorage.removeItem('finalCart');
         window.location.href = 'index.html';
     }
 
@@ -692,12 +977,20 @@
                 <div class="cart-item-details">
                     <h3>${item.name}</h3>
                     <p class="price">PKR. ${item.price.toLocaleString()}</p>
-                    ${item.design ? `<p class="design-details" style="color: #28a745; font-size: 12px;"><i class="fas fa-check-circle"></i> ${item.design}</p>` : ''}
+                    ${item.design ? `
+                        <div style="background: linear-gradient(90deg, #d4edda, #f8fff8); padding: 8px 12px; border-radius: 5px; border-left: 3px solid #28a745; margin: 8px 0;">
+                            <span style="color: #28a745; font-size: 13px;"><i class="fas fa-check-circle"></i> ${item.design}</span>
+                        </div>
+                    ` : ''}
                     ${item.hasMeasurements ? `
-                        <div class="measurements-display">
-                            <h5><i class="fas fa-ruler"></i> Measurements Saved
-                                <button onclick="openMeasurementModal(${index})" style="background: none; border: none; color: #d4af37; cursor: pointer; font-size: 12px;"><i class="fas fa-edit"></i> Edit</button>
-                            </h5>
+                        <div style="background: linear-gradient(90deg, #e8f5e9, #f1f8f1); padding: 10px 12px; border-radius: 5px; border-left: 3px solid #4caf50; margin: 8px 0; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #2e7d32; font-size: 13px;">
+                                <i class="fas fa-ruler"></i> <strong>Measurements Saved</strong>
+                                ${item.measurements ? `<span style="font-size: 11px; color: #666; margin-left: 8px;">(${item.measurements.notes === 'AI Webcam Measurement' ? 'AI Webcam' : 'Manual'})</span>` : ''}
+                            </span>
+                            <button onclick="openMeasurementModal(${index})" style="background: none; border: 1px solid #d4af37; color: #d4af37; cursor: pointer; font-size: 12px; padding: 4px 10px; border-radius: 4px; transition: all 0.3s;">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
                         </div>
                     ` : ''}
                     <div class="design-btn-group">
@@ -867,6 +1160,13 @@
     }
 
     function openMeasurementModal(index) {
+        // Store the index for later use
+        document.getElementById('options-measurement-index').value = index;
+        // Show measurement options modal first (AI Webcam or Manual)
+        document.getElementById('measurement-options-modal').classList.add('active');
+    }
+
+    function openManualMeasurementModal(index) {
         document.getElementById('measurement-item-index').value = index;
 
         // Pre-fill existing measurements
@@ -985,6 +1285,199 @@
         toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ===== MediaPipe Webcam Measurement Functionality =====
+    let mediaPipeMeasurement = null;
+    let userHeightInches = 66; // Default 5'6"
+
+    // Initialize MediaPipe event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Webcam measurement option click
+        document.getElementById('webcam-measurement-option').addEventListener('click', function() {
+            const index = document.getElementById('options-measurement-index').value;
+            document.getElementById('webcam-measurement-item-index').value = index;
+            document.getElementById('measurement-options-modal').classList.remove('active');
+            document.getElementById('webcam-measurement-modal').classList.add('active');
+
+            // Reset webcam modal state
+            resetWebcamModal();
+        });
+
+        // Manual measurement option click
+        document.getElementById('manual-measurement-option').addEventListener('click', function() {
+            const index = document.getElementById('options-measurement-index').value;
+            document.getElementById('measurement-options-modal').classList.remove('active');
+            openManualMeasurementModal(parseInt(index));
+        });
+
+        // Set height button
+        document.getElementById('set-height-btn').addEventListener('click', function() {
+            const feet = parseInt(document.getElementById('height-feet').value);
+            const inches = parseInt(document.getElementById('height-inches').value);
+            userHeightInches = (feet * 12) + inches;
+
+            if (mediaPipeMeasurement) {
+                mediaPipeMeasurement.setUserHeight(userHeightInches);
+            }
+
+            showToast(`Height set to ${feet}' ${inches}"`);
+        });
+
+        // Start camera button
+        document.getElementById('start-camera-btn').addEventListener('click', async function() {
+            try {
+                // Initialize MediaPipe if not already done
+                if (!mediaPipeMeasurement) {
+                    mediaPipeMeasurement = new MediaPipeMeasurement();
+                    mediaPipeMeasurement.setUserHeight(userHeightInches);
+                    await mediaPipeMeasurement.initialize();
+                }
+
+                // Start camera with video element ID
+                await mediaPipeMeasurement.startCamera('webcam-video');
+
+                // Update button visibility
+                document.getElementById('start-camera-btn').style.display = 'none';
+                document.getElementById('stop-camera-btn').style.display = 'inline-flex';
+                document.getElementById('capture-measurement-btn').style.display = 'inline-flex';
+
+            } catch (error) {
+                console.error('Camera error:', error);
+                showToast('Error accessing camera. Please check permissions.');
+            }
+        });
+
+        // Stop camera button
+        document.getElementById('stop-camera-btn').addEventListener('click', function() {
+            if (mediaPipeMeasurement) {
+                mediaPipeMeasurement.stopCamera();
+            }
+
+            document.getElementById('start-camera-btn').style.display = 'inline-flex';
+            document.getElementById('stop-camera-btn').style.display = 'none';
+            document.getElementById('capture-measurement-btn').style.display = 'none';
+            document.getElementById('pose-indicator').textContent = 'Camera stopped';
+        });
+
+        // Capture measurement button
+        document.getElementById('capture-measurement-btn').addEventListener('click', function() {
+            if (mediaPipeMeasurement && mediaPipeMeasurement.isCalibrated) {
+                const measurements = mediaPipeMeasurement.getSimpleMeasurements();
+
+                if (Object.keys(measurements).length > 0) {
+                    displayWebcamMeasurements(measurements);
+
+                    // Stop camera after capture
+                    mediaPipeMeasurement.stopCamera();
+
+                    // Update buttons
+                    document.getElementById('start-camera-btn').style.display = 'none';
+                    document.getElementById('stop-camera-btn').style.display = 'none';
+                    document.getElementById('capture-measurement-btn').style.display = 'none';
+                    document.getElementById('retake-measurement-btn').style.display = 'inline-flex';
+
+                    // Show results
+                    document.getElementById('webcam-results').style.display = 'block';
+                } else {
+                    showToast('No measurements detected yet. Please wait for calibration.');
+                }
+            } else {
+                showToast('Please wait for calibration to complete');
+            }
+        });
+
+        // Retake measurement button
+        document.getElementById('retake-measurement-btn').addEventListener('click', async function() {
+            document.getElementById('webcam-results').style.display = 'none';
+            document.getElementById('retake-measurement-btn').style.display = 'none';
+            document.getElementById('start-camera-btn').style.display = 'inline-flex';
+
+            // Reset MediaPipe for new measurement
+            if (mediaPipeMeasurement) {
+                mediaPipeMeasurement = null;
+            }
+        });
+
+        // Save webcam measurements button
+        document.getElementById('save-webcam-measurements-btn').addEventListener('click', function() {
+            saveWebcamMeasurements();
+        });
+
+        // Close webcam modal - stop camera
+        document.getElementById('close-webcam-modal').addEventListener('click', function() {
+            if (mediaPipeMeasurement) {
+                mediaPipeMeasurement.stopCamera();
+                mediaPipeMeasurement = null;
+            }
+            document.getElementById('webcam-measurement-modal').classList.remove('active');
+            resetWebcamModal();
+        });
+    });
+
+    function displayWebcamMeasurements(measurements) {
+        document.getElementById('webcam-shoulder').value = measurements.shoulder || '';
+        document.getElementById('webcam-chest').value = measurements.chest || '';
+        document.getElementById('webcam-waist').value = measurements.waist || '';
+        document.getElementById('webcam-hip').value = measurements.hip || '';
+        document.getElementById('webcam-sleeve_length').value = measurements.sleeve_length || '';
+        document.getElementById('webcam-kameez_length').value = measurements.kameez_length || '';
+        document.getElementById('webcam-trouser_length').value = measurements.trouser_length || '';
+        document.getElementById('webcam-neck').value = measurements.neck || '';
+    }
+
+    function saveWebcamMeasurements() {
+        const index = parseInt(document.getElementById('webcam-measurement-item-index').value);
+
+        if (isNaN(index) || !cart[index]) {
+            showToast('Error: Item not found');
+            return;
+        }
+
+        // Get measurements from webcam results
+        const measurements = {
+            shoulder: document.getElementById('webcam-shoulder').value,
+            chest: document.getElementById('webcam-chest').value,
+            waist: document.getElementById('webcam-waist').value,
+            hip: document.getElementById('webcam-hip').value,
+            sleeve: document.getElementById('webcam-sleeve_length').value,
+            kameez: document.getElementById('webcam-kameez_length').value,
+            trouser: document.getElementById('webcam-trouser_length').value,
+            neck: document.getElementById('webcam-neck').value,
+            notes: 'AI Webcam Measurement'
+        };
+
+        // Save to cart item
+        cart[index].measurements = measurements;
+        cart[index].hasMeasurements = true;
+
+        saveAndUpdateCart();
+
+        // Close modal and reset
+        document.getElementById('webcam-measurement-modal').classList.remove('active');
+        resetWebcamModal();
+
+        showToast('AI Measurements saved successfully!');
+    }
+
+    function resetWebcamModal() {
+        // Reset buttons
+        document.getElementById('start-camera-btn').style.display = 'inline-flex';
+        document.getElementById('stop-camera-btn').style.display = 'none';
+        document.getElementById('capture-measurement-btn').style.display = 'none';
+        document.getElementById('capture-measurement-btn').disabled = true;
+        document.getElementById('capture-measurement-btn').style.background = 'linear-gradient(135deg, #6c757d 0%, #5a6268 100%)';
+        document.getElementById('retake-measurement-btn').style.display = 'none';
+
+        // Reset results
+        document.getElementById('webcam-results').style.display = 'none';
+
+        // Reset status
+        document.getElementById('pose-indicator').textContent = 'Click Start Camera to begin';
+        document.getElementById('distance-fill').style.width = '0%';
+        document.getElementById('distance-text').textContent = 'Waiting...';
+
+        currentWebcamMeasurements = null;
     }
     </script>
 </body>

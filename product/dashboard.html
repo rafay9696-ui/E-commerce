@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Stitch House</title>
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* My Order Link Styles */
+        .myorder-link {
+            position: relative;
+            margin-right: 15px;
+        }
+        .myorder-link a {
+            color: var(--text-color, #333);
+            font-size: 20px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .myorder-link a:hover { color: var(--gold-color, #d4af37); }
+        .myorder-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #d4af37;
+            color: white;
+            font-size: 10px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* User Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            color: #333;
+            font-size: 14px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .user-dropdown-btn:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        .user-dropdown-btn .fa-user-circle {
+            font-size: 22px;
+            color: #d4af37;
+        }
+        .user-dropdown-btn .dropdown-arrow {
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+        .user-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 5px);
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+        .user-dropdown.active .user-dropdown-content {
+            display: block;
+            animation: dropdownFade 0.2s ease;
+        }
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user-dropdown-content a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .user-dropdown-content a:hover {
+            background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent);
+            color: #d4af37;
+        }
+        .user-dropdown-content a i {
+            width: 20px;
+            color: #d4af37;
+        }
+        .user-dropdown-content a:first-child {
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-section {
+            padding: 60px 0;
+            background-color: #f9f9f9;
+            min-height: 70vh;
+        }
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .dashboard-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+        .profile-header {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 25px;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+        .profile-avatar i {
+            font-size: 50px;
+            color: white;
+        }
+        .profile-header h3 {
+            font-size: 20px;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+        .profile-header p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: linear-gradient(90deg, rgba(212,175,55,0.15), transparent);
+            color: #d4af37;
+        }
+        .sidebar-menu a i {
+            width: 22px;
+            font-size: 18px;
+            color: #d4af37;
+        }
+
+        /* Main Content */
+        .dashboard-main {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .dashboard-card h2 {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            color: #333;
+            margin: 0 0 25px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dashboard-card h2 i {
+            color: #d4af37;
+        }
+
+        /* Profile Form */
+        .profile-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        .form-group input {
+            padding: 14px 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #d4af37;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
+        .form-group input:disabled {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+        .btn-save {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212,175,55,0.4);
+        }
+
+        /* Order History */
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .order-item {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .order-item:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+        .order-header:hover {
+            background: #f0f0f0;
+        }
+        .order-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .order-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #666;
+        }
+        .order-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .order-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .order-status.processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .order-status.pending {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .order-details {
+            display: none;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        .order-item.expanded .order-details {
+            display: block;
+        }
+        .order-products {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .order-product {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .order-product img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .order-product-info h5 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .order-product-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #666;
+        }
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .order-total span {
+            font-weight: 600;
+            font-size: 16px;
+            color: #d4af37;
+        }
+        .no-orders {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        .no-orders i {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        .no-orders h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .no-orders a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #d4af37;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .no-orders a:hover {
+            background: #b8941f;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-sidebar {
+                order: -1;
+            }
+        }
+        @media (max-width: 576px) {
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Side Navigation -->
+    <div class="side-nav">
+        <div class="side-nav-content">
+            <div class="side-nav-header">
+                <div class="logo-container">
+                    <h2 class="logo-text">Stitch House</h2>
+                </div>
+                <button class="close-sidenav">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="side-nav-links">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i>Home</a></li>
+                    <li><a href="order.html"><i class="fas fa-shopping-bag"></i>Shop Now</a></li>
+                    <li><a href="myorder.html"><i class="fas fa-shopping-cart"></i>My Order</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i>Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="side-nav-footer">
+                <div class="social-icons">
+                    <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="side-nav-backdrop"></div>
+
+    <header>
+        <div class="container">
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="site-title">
+                <a href="index.html">
+                    <h1 class="logo-text">Stitch House</h1>
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="order.html" class="nav-link">Shop Now</a></li>
+                    <li><a href="myorder.html" class="nav-link">My Order</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="login-link" id="login-link">
+                    <a href="login.html">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </div>
+                <div class="myorder-link">
+                    <a href="myorder.html" title="My Order">
+                        <i class="fas fa-cut"></i>
+                        <span class="myorder-count">0</span>
+                    </a>
+                </div>
+                <div class="cart-link">
+                    <a href="cart.html" title="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+                <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                    <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name"></span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </button>
+                    <div class="user-dropdown-content">
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="#" onclick="handleLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>My Dashboard</h1>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> / <span>Dashboard</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-container">
+                <!-- Sidebar -->
+                <div class="dashboard-sidebar">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 id="sidebar-user-name">Guest User</h3>
+                        <p id="sidebar-user-email">guest@example.com</p>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#profile" class="active" onclick="showSection('profile')"><i class="fas fa-user"></i> My Profile</a></li>
+                        <li><a href="#orders" onclick="showSection('orders')"><i class="fas fa-shopping-bag"></i> Order History</a></li>
+                        <li><a href="#" onclick="handleLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+
+                <!-- Main Content -->
+                <div class="dashboard-main">
+                    <!-- Profile Section -->
+                    <div class="dashboard-card" id="profile-section">
+                        <h2><i class="fas fa-user"></i> My Profile</h2>
+                        <form class="profile-form" id="profile-form">
+                            <div class="form-group">
+                                <label for="profile-name">Full Name</label>
+                                <input type="text" id="profile-name" placeholder="Enter your name">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-email">Email Address</label>
+                                <input type="email" id="profile-email" placeholder="Enter your email">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-phone">Phone Number</label>
+                                <input type="tel" id="profile-phone" placeholder="Enter your phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-address">Address</label>
+                                <input type="text" id="profile-address" placeholder="Enter your address">
+                            </div>
+                            <div class="form-group full-width">
+                                <button type="submit" class="btn-save">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Order History Section -->
+                    <div class="dashboard-card" id="orders-section" style="display: none;">
+                        <h2><i class="fas fa-shopping-bag"></i> Order History</h2>
+                        <div class="order-list" id="order-list">
+                            <!-- Orders will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <div class="footer-logo">
+                        <a href="index.html" class="logo-button">
+                            <h3 class="logo-text">Stitch House</h3>
+                        </a>
+                    </div>
+                    <p>Your premium destination for high-quality fabrics and exceptional service.</p>
+                    <div class="social-icons">
+                        <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                        <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="order.html">Shop Now</a></li>
+                        <li><a href="myorder.html">My Order</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Main Gulberg, Lahore, Pakistan</p>
+                    <p><i class="fas fa-phone"></i> 0304-2292813</p>
+                    <p><i class="fas fa-envelope"></i> info@stitchhouse.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Stitch House. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is logged in
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Side navigation functionality
+        const sideNavToggle = document.querySelector('.menu-toggle');
+        const sideNav = document.querySelector('.side-nav');
+        const sideNavBackdrop = document.querySelector('.side-nav-backdrop');
+        const sideNavClose = document.querySelector('.close-sidenav');
+
+        if (sideNavToggle && sideNav) {
+            sideNavToggle.addEventListener('click', () => {
+                sideNav.classList.add('open');
+                sideNavBackdrop.classList.add('active');
+                document.body.classList.add('no-scroll');
+            });
+        }
+
+        function closeSideNav() {
+            if (sideNav) {
+                sideNav.classList.remove('open');
+                sideNavBackdrop.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        if (sideNavClose) sideNavClose.addEventListener('click', closeSideNav);
+        if (sideNavBackdrop) sideNavBackdrop.addEventListener('click', closeSideNav);
+
+        // Load user profile
+        loadUserProfile();
+
+        // Load order history
+        loadOrderHistory();
+
+        // Update cart counts
+        updateCartCount();
+
+        // Check login status for header
+        checkLoginStatus();
+
+        // Profile form submission
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveUserProfile();
+        });
+
+        // Back to top button
+        const backToTopBtn = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    function loadUserProfile() {
+        const userName = localStorage.getItem('userName') || '';
+        const userEmail = localStorage.getItem('userEmail') || '';
+        const userPhone = localStorage.getItem('userPhone') || '';
+        const userAddress = localStorage.getItem('userAddress') || '';
+
+        document.getElementById('profile-name').value = userName;
+        document.getElementById('profile-email').value = userEmail;
+        document.getElementById('profile-phone').value = userPhone;
+        document.getElementById('profile-address').value = userAddress;
+
+        document.getElementById('sidebar-user-name').textContent = userName || 'Guest User';
+        document.getElementById('sidebar-user-email').textContent = userEmail || 'guest@example.com';
+    }
+
+    function saveUserProfile() {
+        const name = document.getElementById('profile-name').value;
+        const email = document.getElementById('profile-email').value;
+        const phone = document.getElementById('profile-phone').value;
+        const address = document.getElementById('profile-address').value;
+
+        localStorage.setItem('userName', name);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userPhone', phone);
+        localStorage.setItem('userAddress', address);
+
+        document.getElementById('sidebar-user-name').textContent = name || 'Guest User';
+        document.getElementById('sidebar-user-email').textContent = email || 'guest@example.com';
+
+        // Update header name
+        const userNameEl = document.querySelector('.user-dropdown .user-name');
+        if (userNameEl) userNameEl.textContent = name;
+
+        alert('Profile updated successfully!');
+    }
+
+    function loadOrderHistory() {
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        const orderList = document.getElementById('order-list');
+
+        if (orders.length === 0) {
+            orderList.innerHTML = `
+                <div class="no-orders">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>No Orders Yet</h3>
+                    <p>You haven't placed any orders yet. Start shopping to see your order history here.</p>
+                    <a href="order.html">Start Shopping</a>
+                </div>
+            `;
+            return;
+        }
+
+        orderList.innerHTML = orders.map((order, index) => {
+            const orderDate = new Date(order.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const orderTotal = order.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+            const productsHTML = order.items.map(item => `
+                <div class="order-product">
+                    <img src="images/${item.image}" alt="${item.name}" onerror="this.src='images/placeholder.jpg'">
+                    <div class="order-product-info">
+                        <h5>${item.name}</h5>
+                        <p>PKR ${item.price.toLocaleString()} x ${item.quantity}</p>
+                        ${item.design ? `<p style="color: #d4af37; font-size: 12px;">${item.design}</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="order-item" id="order-${index}">
+                    <div class="order-header" onclick="toggleOrder(${index})">
+                        <div class="order-info">
+                            <h4>Order #${order.orderNumber}</h4>
+                            <p>${orderDate} | ${order.items.length} item(s)</p>
+                        </div>
+                        <span class="order-status completed">Completed</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-products">
+                            ${productsHTML}
+                        </div>
+                        <div class="order-total">
+                            <span>Total:</span>
+                            <span>PKR ${(orderTotal + 200).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function toggleOrder(index) {
+        const orderItem = document.getElementById(`order-${index}`);
+        orderItem.classList.toggle('expanded');
+    }
+
+    function showSection(section) {
+        const profileSection = document.getElementById('profile-section');
+        const ordersSection = document.getElementById('orders-section');
+        const menuLinks = document.querySelectorAll('.sidebar-menu a');
+
+        menuLinks.forEach(link => link.classList.remove('active'));
+
+        if (section === 'profile') {
+            profileSection.style.display = 'block';
+            ordersSection.style.display = 'none';
+            menuLinks[0].classList.add('active');
+        } else if (section === 'orders') {
+            profileSection.style.display = 'none';
+            ordersSection.style.display = 'block';
+            menuLinks[1].classList.add('active');
+        }
+    }
+
+    function updateCartCount() {
+        const cartCountEl = document.querySelector('.cart-count');
+        const myorderCountEl = document.querySelector('.myorder-count');
+        const shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        const finalCart = JSON.parse(localStorage.getItem('finalCart')) || [];
+
+        let myOrderTotal = 0;
+        shoppingCart.forEach(item => myOrderTotal += item.quantity || 1);
+        if (myorderCountEl) myorderCountEl.textContent = myOrderTotal;
+
+        let cartTotal = 0;
+        finalCart.forEach(item => cartTotal += item.quantity || 1);
+        if (cartCountEl) cartCountEl.textContent = cartTotal;
+    }
+
+    function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const userName = localStorage.getItem('userName');
+        const loginLink = document.getElementById('login-link');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        if (isLoggedIn && userName) {
+            if (loginLink) loginLink.style.display = 'none';
+            if (userDropdown) {
+                userDropdown.style.display = 'block';
+                userDropdown.querySelector('.user-name').textContent = userName;
+            }
+        } else {
+            if (loginLink) loginLink.style.display = 'block';
+            if (userDropdown) userDropdown.style.display = 'none';
+        }
+    }
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('user-dropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('user-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+
+    function handleLogout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userPhone');
+        localStorage.removeItem('shoppingCart');
+        localStorage.removeItem('finalCart');
+        window.location.href = 'index.html';
+    }
+    </script>
+</body>
+</html>

@@ -43,6 +43,38 @@
             justify-content: center;
             font-weight: bold;
         }
+
+        /* User Dropdown Styles */
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-dropdown-btn {
+            display: flex; align-items: center; gap: 8px;
+            background: none; border: none; cursor: pointer;
+            padding: 8px 12px; color: #333; font-size: 14px;
+            border-radius: 25px; transition: all 0.3s ease;
+        }
+        .user-dropdown-btn:hover { background-color: rgba(212, 175, 55, 0.1); }
+        .user-dropdown-btn .fa-user-circle { font-size: 22px; color: #d4af37; }
+        .user-dropdown-btn .dropdown-arrow { font-size: 10px; transition: transform 0.3s; }
+        .user-dropdown.active .dropdown-arrow { transform: rotate(180deg); }
+        .user-dropdown-content {
+            display: none; position: absolute; right: 0; top: calc(100% + 5px);
+            background: white; min-width: 200px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 10px; z-index: 1000; overflow: hidden; border: 1px solid #eee;
+        }
+        .user-dropdown.active .user-dropdown-content { display: block; animation: dropdownFade 0.2s ease; }
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user-dropdown-content a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 18px; color: #333; text-decoration: none;
+            transition: all 0.2s; font-size: 14px;
+        }
+        .user-dropdown-content a:hover { background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent); color: #d4af37; }
+        .user-dropdown-content a i { width: 20px; color: #d4af37; }
+        .user-dropdown-content a:first-child { border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -114,11 +146,16 @@
                         <span class="cart-count">0</span>
                     </a>
                 </div>
-                <div class="user-info" id="user-info" style="display: none;">
-                    <span class="user-name"></span>
-                    <a href="#" class="logout-link" onclick="handleLogout(); return false;">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
+                <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                    <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name"></span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </button>
+                    <div class="user-dropdown-content">
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="#" onclick="handleLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -478,26 +515,40 @@
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         const userName = localStorage.getItem('userName');
         const loginLink = document.getElementById('login-link');
-        const userInfo = document.getElementById('user-info');
+        const userDropdown = document.getElementById('user-dropdown');
 
         if (isLoggedIn && userName) {
             if (loginLink) loginLink.style.display = 'none';
-            if (userInfo) {
-                userInfo.style.display = 'flex';
-                userInfo.querySelector('.user-name').textContent = userName;
+            if (userDropdown) {
+                userDropdown.style.display = 'block';
+                userDropdown.querySelector('.user-name').textContent = userName;
             }
         } else {
             if (loginLink) loginLink.style.display = 'block';
-            if (userInfo) userInfo.style.display = 'none';
+            if (userDropdown) userDropdown.style.display = 'none';
         }
     }
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('user-dropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('user-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
 
     function handleLogout() {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('userName');
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userPhone');
-        window.location.reload();
+        localStorage.removeItem('shoppingCart');
+        localStorage.removeItem('finalCart');
+        window.location.href = 'index.html';
     }
     </script>
 

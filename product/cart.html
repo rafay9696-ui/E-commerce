@@ -41,25 +41,97 @@
             font-weight: bold;
         }
 
+        /* User Dropdown Styles */
         .user-dropdown { position: relative; display: inline-block; }
         .user-dropdown-btn {
             display: flex; align-items: center; gap: 8px;
             background: none; border: none; cursor: pointer;
-            padding: 5px 10px; color: #333;
+            padding: 8px 12px; color: #333; font-size: 14px;
+            border-radius: 25px; transition: all 0.3s ease;
         }
+        .user-dropdown-btn:hover { background-color: rgba(212, 175, 55, 0.1); }
+        .user-dropdown-btn .fa-user-circle { font-size: 22px; color: #d4af37; }
+        .user-dropdown-btn .dropdown-arrow { font-size: 10px; transition: transform 0.3s; }
+        .user-dropdown.active .dropdown-arrow { transform: rotate(180deg); }
         .user-dropdown-content {
-            display: none; position: absolute; right: 0; top: 100%;
-            background: white; min-width: 160px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 8px; z-index: 1000; overflow: hidden;
+            display: none; position: absolute; right: 0; top: calc(100% + 5px);
+            background: white; min-width: 200px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: 10px; z-index: 1000; overflow: hidden; border: 1px solid #eee;
         }
-        .user-dropdown:hover .user-dropdown-content { display: block; }
+        .user-dropdown.active .user-dropdown-content { display: block; animation: dropdownFade 0.2s ease; }
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .user-dropdown-content a {
-            display: flex; align-items: center; gap: 10px;
-            padding: 12px 15px; color: #333; text-decoration: none;
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 18px; color: #333; text-decoration: none;
+            transition: all 0.2s; font-size: 14px;
         }
-        .user-dropdown-content a:hover { background: #f5f5f5; }
+        .user-dropdown-content a:hover { background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent); color: #d4af37; }
         .user-dropdown-content a i { width: 20px; color: #d4af37; }
+        .user-dropdown-content a:first-child { border-bottom: 1px solid #eee; }
+
+        /* Cart Layout Enhancements */
+        .cart-items {
+            flex: 3;
+        }
+        .cart-items h2 {
+            font-family: 'Playfair Display', serif;
+            color: #333;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .cart-items-container {
+            max-height: 450px;
+            overflow-y: auto;
+        }
+        .cart-measurements-display {
+            overflow: visible;
+        }
+        .cart-measurements-display .measurements-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            overflow: visible;
+        }
+        .cart-measurements-display .measurement-item {
+            flex: 0 0 auto;
+            min-width: 60px;
+        }
+        .cart-summary h2 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: #d4af37;
+            border-bottom: 2px solid #f0e6c8;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .summary-row {
+            color: #d4af37;
+        }
+        .summary-row.total {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+        .summary-row.total span:first-child {
+            color: #333;
+            font-weight: bold;
+        }
+        .summary-row.total span:last-child {
+            color: #d4af37;
+            font-weight: bold;
+        }
+        .continue-shopping {
+            margin-top: 15px;
+        }
+        .continue-shopping a {
+            color: #d4af37;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -137,13 +209,13 @@
                     </a>
                 </div>
                 <div class="user-dropdown" id="user-dropdown" style="display: none;">
-                    <button class="user-dropdown-btn">
+                    <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
                         <i class="fas fa-user-circle"></i>
                         <span class="user-name"></span>
-                        <i class="fas fa-chevron-down"></i>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
                     </button>
                     <div class="user-dropdown-content">
-                        <a href="myorder.html"><i class="fas fa-tachometer-alt"></i> My Orders</a>
+                        <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                         <a href="#" onclick="handleLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
@@ -423,14 +495,52 @@
 
                 const cartItemEl = document.createElement('div');
                 cartItemEl.classList.add('cart-item');
+
+                // Build measurements HTML if available (using grid layout from cart.css)
+                let measurementsHtml = '';
+                if (item.measurements && item.hasMeasurements) {
+                    const measurementLabels = {
+                        shoulder: 'Shoulder', chest: 'Chest', waist: 'Waist', hip: 'Hip',
+                        sleeve: 'Sleeve', kameez: 'Kameez', trouser: 'Trouser', neck: 'Neck'
+                    };
+                    let measurementItems = '';
+                    for (const [key, label] of Object.entries(measurementLabels)) {
+                        if (item.measurements[key]) {
+                            measurementItems += `
+                                <div class="measurement-item">
+                                    <span class="label">${label}</span>
+                                    <span class="value">${item.measurements[key]}"</span>
+                                </div>
+                            `;
+                        }
+                    }
+                    if (measurementItems) {
+                        measurementsHtml = `
+                            <div class="cart-measurements-display">
+                                <div class="measurements-header">
+                                    <i class="fas fa-ruler-combined"></i> MEASUREMENTS
+                                </div>
+                                <div class="measurements-grid">
+                                    ${measurementItems}
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
                 cartItemEl.innerHTML = `
                     <div class="cart-item-image">
-                        <img src="images/${item.image}" alt="${item.name}">
+                        <img src="images/${item.image}" alt="${item.name}" onerror="this.src='images/placeholder.jpg'">
                     </div>
                     <div class="cart-item-details">
                         <h3>${item.name}</h3>
                         <p class="price">PKR ${item.price.toLocaleString()}</p>
-                        ${item.design ? `<p class="design-details">${item.design}</p>` : ''}
+                        ${item.design ? `
+                            <div class="design-details">
+                                <i class="fas fa-tshirt" style="color: #d4af37;"></i> ${item.design}
+                            </div>
+                        ` : ''}
+                        ${measurementsHtml}
                     </div>
                     <div class="cart-item-quantity">
                         <button class="quantity-btn decrease" data-index="${index}">-</button>
@@ -597,12 +707,26 @@
         }
     }
 
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('user-dropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('user-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+
     function handleLogout() {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('userName');
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userPhone');
-        window.location.reload();
+        localStorage.removeItem('shoppingCart');
+        localStorage.removeItem('finalCart');
+        window.location.href = 'index.html';
     }
     </script>
 </body>

@@ -1,0 +1,550 @@
+/* Complete, organized CSS for checkout.css */
+
+/* ===== GENERAL STYLES ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.checkout-section {
+    padding: 50px 0;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ===== CHECKOUT LAYOUT ===== */
+.checkout-container {
+    display: flex;
+    gap: 30px;
+    margin: 30px 0;
+    flex-direction: row !important; /* Force side-by-side layout */
+    align-items: flex-start;
+}
+
+/* Left side - Checkout Form */
+.checkout-form {
+    flex: 1.2;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    order: 1; /* Ensure it's always on the left */
+}
+
+/* Right side - Order Summary */
+.order-summary {
+    flex: 0.8;
+    position: sticky;
+    top: 20px;
+    order: 2; /* Ensure it's always on the right */
+    max-height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.checkout-form h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    color: #222;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.checkout-form label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100%;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+}
+
+.checkout-form input:focus,
+.checkout-form textarea:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+    outline: none;
+}
+
+.checkout-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Payment methods styling */
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.payment-method {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.payment-method:hover {
+    background-color: #f5f5f5;
+}
+
+.payment-method.selected {
+    border-color: #d4af37;
+    background-color: rgba(212, 175, 55, 0.05);
+}
+
+.payment-method input[type="radio"] {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    accent-color: #d4af37;
+}
+
+.payment-method label {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Terms checkbox */
+.terms-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 25px 0;
+}
+
+.terms-checkbox input {
+    width: auto;
+    margin: 0;
+}
+
+.terms-checkbox label {
+    margin: 0;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.terms-checkbox a {
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.terms-checkbox a:hover {
+    text-decoration: underline;
+}
+
+/* Submit button */
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    background-color: #d4af37;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 15px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.btn-primary:hover {
+    background-color: #c19b2e;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ===== ORDER SUMMARY STYLES ===== */
+.order-summary h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    color: #222;
+}
+
+/* Cart Items in Summary */
+.cart-items {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 25px;
+    padding-right: 5px;
+    flex: 1;
+}
+
+/* Scrollbar styling for cart items */
+.cart-items::-webkit-scrollbar {
+    width: 5px;
+}
+
+.cart-items::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.cart-items::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.cart-items::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Individual item in summary */
+.summary-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+/* Item image */
+.item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-right: 15px;
+    flex-shrink: 0;
+    background-color: #f8f9fa;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: white;
+}
+
+/* Item details */
+.item-details {
+    flex: 1;
+    min-width: 0; /* Allows text to wrap properly */
+    padding-right: 10px;
+}
+
+.item-details h3 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.item-details p {
+    font-size: 14px;
+    color: #666;
+    margin: 3px 0;
+}
+
+/* Design options display */
+p.design {
+    font-size: 12px;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+/* Item total */
+.item-total {
+    font-weight: 600;
+    font-size: 16px;
+    white-space: nowrap;
+    margin-left: 15px;
+    flex-shrink: 0;
+}
+
+/* Summary totals section */
+.summary-totals {
+    margin-top: auto;
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 16px;
+}
+
+.summary-row.total {
+    font-weight: 700;
+    font-size: 20px;
+    color: #000;
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+    margin-top: 10px;
+}
+
+/* ===== ALERTS ===== */
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #f5c6cb;
+}
+
+/* Empty cart message */
+.empty-cart-message {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.empty-cart-message i {
+    font-size: 50px;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.empty-cart-message h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.empty-cart-message p {
+    margin-bottom: 25px;
+    color: #666;
+}
+
+.empty-cart-message .btn-primary {
+    max-width: 200px;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Design and measurements summaries */
+.design-summary, .measurements-summary {
+    margin: 8px 0;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.design-summary strong, .measurements-summary strong {
+    color: #333;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.design-details, .measurements-grid {
+    color: #666;
+    line-height: 1.4;
+}
+
+.measurements-grid {
+    max-height: 60px;
+    overflow-y: auto;
+}
+
+.measurement-source {
+    margin-top: 4px;
+    text-align: right;
+}
+
+.item-price {
+    margin: 0 0 5px 0;
+    font-weight: 500;
+    color: #d4af37;
+}
+
+/* Scrollbar styling for measurements */
+.measurements-grid::-webkit-scrollbar {
+    width: 3px;
+}
+
+.measurements-grid::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+@media screen and (max-width: 992px) {
+    .checkout-container {
+        gap: 20px;
+    }
+    
+    .checkout-form {
+        flex: 1;
+    }
+    
+    .order-summary {
+        flex: 1;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .checkout-container {
+        flex-direction: column !important;
+        gap: 30px;
+    }
+    
+    .checkout-form,
+    .order-summary {
+        width: 100%;
+    }
+    
+    .order-summary {
+        position: relative;
+        top: 0;
+    }
+    
+    .summary-item {
+        flex-wrap: wrap;
+    }
+    
+    .item-details {
+        width: calc(100% - 90px);
+    }
+    
+    .item-total {
+        width: 100%;
+        text-align: right;
+        margin-left: 85px;
+        margin-top: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    h1 {
+        font-size: 24px;
+    }
+    
+    .checkout-form, 
+    .order-summary {
+        padding: 15px;
+    }
+    
+    .item-details h3 {
+        font-size: 14px;
+    }
+    
+    .item-details p,
+    .summary-row {
+        font-size: 14px;
+    }
+    
+    .summary-row.total {
+        font-size: 18px;
+    }
+    
+    .item-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .btn-primary {
+        font-size: 16px;
+        padding: 14px;
+    }
+}
+
+/* Modal styles for product customization */
+.modal {
+    display: none;
+    position: fixed !important;
+    z-index: 9999 !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: auto !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: block !important;
+}
+
+body.modal-open {
+    overflow: hidden !important;
+}
+
+.modal-content {
+    background-color: #fff !important;
+    margin: 50px auto !important;
+    width: 90% !important;
+    max-width: 900px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2) !important;
+    animation: slideDown 0.4s ease;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    position: relative !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

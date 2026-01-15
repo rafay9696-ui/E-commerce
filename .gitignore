@@ -1,0 +1,15 @@
+# Ignore problematic files
+product/nul
+nul
+
+# Ignore temporary files
+tmpclaude-*
+product/tmpclaude-*
+
+# Ignore Claude settings
+.claude/
+product/.claude/
+
+# Ignore system files
+.DS_Store
+Thumbs.db

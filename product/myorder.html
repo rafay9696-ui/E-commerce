@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Order - Stitch House</title>
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="order.css">
+    <link rel="stylesheet" href="myorder.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* My Order Link Styles */
+        .myorder-link {
+            position: relative;
+            margin-right: 15px;
+        }
+        .myorder-link a {
+            color: var(--text-color, #333);
+            font-size: 20px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .myorder-link a:hover { color: var(--gold-color, #d4af37); }
+        .myorder-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #d4af37;
+            color: white;
+            font-size: 10px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .customize-item-btn, .measurement-btn, .add-to-cart-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            background-color: #d4af37;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+            gap: 5px;
+        }
+        .customize-item-btn { background-color: #d4af37; }
+        .measurement-btn { margin-left: 10px; background-color: #333; }
+        .customize-item-btn:hover, .measurement-btn:hover, .add-to-cart-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+        .add-to-cart-btn { margin-top: 10px; width: 100%; background-color: #28a745; }
+        .add-to-cart-btn.disabled { background-color: #ccc; cursor: not-allowed; }
+        .design-btn-group { display: flex; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 5px; }
+        .cart-item-total { display: flex; flex-direction: column; align-items: flex-end; }
+
+        /* Design Panel Styles */
+        .item-design-options {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .design-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .design-header h4 { margin: 0; color: #333; }
+        .close-design-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        .close-design-btn:hover { color: #333; }
+        .design-section { margin-bottom: 15px; }
+        .design-section h5 { margin: 0 0 10px 0; color: #555; font-size: 14px; }
+        .design-options { display: flex; flex-wrap: wrap; gap: 10px; }
+        .design-option {
+            flex: 1;
+            min-width: 120px;
+        }
+        .design-option input[type="radio"] { display: none; }
+        .design-option label {
+            display: block;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+        .design-option input[type="radio"]:checked + label {
+            border-color: #d4af37;
+            background-color: #fdf8e8;
+            color: #b8941f;
+        }
+        .btn-confirm-design {
+            width: 100%;
+            padding: 12px;
+            background: #d4af37;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .btn-confirm-design:hover { background: #b8941f; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalFadeIn 0.3s;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+        }
+        .close-modal:hover { color: #333; }
+        .modal h3 {
+            margin: 0 0 20px 0;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .measurement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .measurement-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+        .measurement-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .measurement-field small {
+            color: #666;
+            font-size: 11px;
+        }
+        .btn-save-measurements {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .btn-save-measurements:hover { background: #218838; }
+
+        /* Measurements Display */
+        .measurements-display {
+            background: #e8f5e9;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .measurements-display h5 {
+            margin: 0 0 8px 0;
+            color: #28a745;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .measurements-display table { width: 100%; }
+        .measurements-display td { padding: 2px 5px; }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            color: #333;
+        }
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .user-dropdown:hover .user-dropdown-content,
+        .user-dropdown.active .user-dropdown-content { display: block; }
+        .user-dropdown-content a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .user-dropdown-content a:hover { background: #f5f5f5; }
+        .user-dropdown-content a i { width: 20px; color: #d4af37; }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Side Navigation -->
+    <div class="side-nav">
+        <div class="side-nav-content">
+            <div class="side-nav-header">
+                <div class="logo-container">
+                    <h2 class="logo-text">Stitch House</h2>
+                </div>
+                <button class="close-sidenav">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="side-nav-links">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i>Home</a></li>
+                    <li><a href="order.html"><i class="fas fa-shopping-bag"></i>Shop Now</a></li>
+                    <li><a href="myorder.html" class="active"><i class="fas fa-shopping-cart"></i>My Order</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i>Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="side-nav-footer">
+                <div class="social-icons">
+                    <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="side-nav-backdrop"></div>
+
+    <header>
+        <div class="container">
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="site-title">
+                <a href="index.html">
+                    <h1 class="logo-text">Stitch House</h1>
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="order.html" class="nav-link">Shop Now</a></li>
+                    <li><a href="myorder.html" class="nav-link active">My Order</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="login-link" id="login-link">
+                    <a href="login.html">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </div>
+                <div class="myorder-link">
+                    <a href="myorder.html" title="My Order">
+                        <i class="fas fa-cut"></i>
+                        <span class="myorder-count">0</span>
+                    </a>
+                </div>
+                <div class="cart-link">
+                    <a href="cart.html" title="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+                <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                    <button class="user-dropdown-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name"></span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown-content">
+                        <a href="#" onclick="return false;"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="#" onclick="showOrderHistory(); return false;"><i class="fas fa-history"></i> Order History</a>
+                        <a href="#" onclick="handleLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>My Order</h1>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> / <a href="order.html">Shop</a> / <span>My Order</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Order Section -->
+    <section class="my-order-section">
+        <div class="container">
+            <div class="order-container">
+                <div class="empty-cart-message" style="display: none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Your order is empty</h2>
+                    <p>Browse our collection and add some fabrics to customize</p>
+                    <a href="order.html" class="btn-primary">Shop Now</a>
+                </div>
+
+                <div class="order-content">
+                    <div class="order-items">
+                        <h2>Order Items - Customize Your Fabrics</h2>
+                        <div class="cart-items-container">
+                            <!-- Cart items will be loaded here dynamically -->
+                        </div>
+
+                        <div class="cart-actions">
+                            <a href="cart.html" class="btn-view-cart">View Final Cart</a>
+                            <button class="btn-clear-cart">Clear All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Measurement Modal -->
+    <div id="measurement-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h3><i class="fas fa-ruler"></i> Enter Your Measurements</h3>
+            <input type="hidden" id="measurement-item-index" value="">
+
+            <div class="measurement-grid">
+                <div class="measurement-field">
+                    <label for="m-chest"><i class="fas fa-expand-arrows-alt"></i> Chest (inches)</label>
+                    <input type="number" id="m-chest" step="0.1" placeholder="e.g. 40">
+                    <small>Measure around fullest part</small>
+                </div>
+                <div class="measurement-field">
+                    <label for="m-waist"><i class="fas fa-expand-arrows-alt"></i> Waist (inches)</label>
+                    <input type="number" id="m-waist" step="0.1" placeholder="e.g. 32">
+                    <small>Measure at natural waistline</small>
+                </div>
+                <div class="measurement-field">
+                    <label for="m-hip"><i class="fas fa-expand-arrows-alt"></i> Hip (inches)</label>
+                    <input type="number" id="m-hip" step="0.1" placeholder="e.g. 38">
+                    <small>Measure around fullest part</small>
+                </div>
+                <div class="measurement-field">
+                    <label for="m-shoulder"><i class="fas fa-arrows-alt-h"></i> Shoulder (inches)</label>
+                    <input type="number" id="m-shoulder" step="0.1" placeholder="e.g. 18">
+                    <small>Shoulder to shoulder</small>
+                </div>
+                <div class="measurement-field">
+                    <label for="m-sleeve"><i class="fas fa-ruler-vertical"></i> Sleeve Length (inches)</label>
+                    <input type="number" id="m-sleeve" step="0.1" placeholder="e.g. 24">
+                    <small>Shoulder to wrist</small>
+                </div>
+                <div class="measurement-field">
+                    <label for="m-kameez"><i class="fas fa-ruler-vertical"></i> Kameez Length (inches)</label>
+                    <input type="number" id="m-kameez" step="0.1" placeholder="e.g. 42">
+                    <small>Shoulder to desired length</small>
+                </div>
+                <div class="measurement-field">
+                    <label for="m-trouser"><i class="fas fa-ruler-vertical"></i> Trouser Length (inches)</label>
+                    <input type="number" id="m-trouser" step="0.1" placeholder="e.g. 40">
+                    <small>Waist to ankle</small>
+                </div>
+                <div class="measurement-field">
+                    <label for="m-neck"><i class="fas fa-circle"></i> Neck (inches)</label>
+                    <input type="number" id="m-neck" step="0.1" placeholder="e.g. 15">
+                    <small>Around neck</small>
+                </div>
+            </div>
+
+            <div class="measurement-field" style="margin-top: 15px;">
+                <label for="m-notes"><i class="fas fa-sticky-note"></i> Additional Notes</label>
+                <textarea id="m-notes" rows="2" placeholder="Any special instructions..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+            </div>
+
+            <button class="btn-save-measurements" onclick="saveMeasurements()">
+                <i class="fas fa-check"></i> Save Measurements
+            </button>
+        </div>
+    </div>
+
+    <!-- Order History Modal -->
+    <div id="order-history-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h3><i class="fas fa-history"></i> Your Order History</h3>
+            <div id="order-history-content">
+                <!-- Order history will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <div class="footer-logo">
+                        <a href="index.html" class="logo-button">
+                            <h3 class="logo-text">Stitch House</h3>
+                        </a>
+                    </div>
+                    <p>Your premium destination for high-quality fabrics and exceptional service.</p>
+                    <div class="social-icons">
+                        <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                        <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="order.html">Shop Now</a></li>
+                        <li><a href="myorder.html">My Order</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Main Gulberg, Lahore, Pakistan</p>
+                    <p><i class="fas fa-phone"></i> 0304-2292813</p>
+                    <p><i class="fas fa-envelope"></i> info@stitchhouse.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Stitch House. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+    // Global cart variable
+    let cart = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Side navigation functionality
+        const sideNavToggle = document.querySelector('.menu-toggle');
+        const sideNav = document.querySelector('.side-nav');
+        const sideNavBackdrop = document.querySelector('.side-nav-backdrop');
+        const sideNavClose = document.querySelector('.close-sidenav');
+
+        if (sideNavToggle && sideNav) {
+            sideNavToggle.addEventListener('click', () => {
+                sideNav.classList.add('open');
+                sideNavBackdrop.classList.add('active');
+                document.body.classList.add('no-scroll');
+            });
+        }
+
+        function closeSideNav() {
+            if (sideNav) {
+                sideNav.classList.remove('open');
+                sideNavBackdrop.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        if (sideNavClose) sideNavClose.addEventListener('click', closeSideNav);
+        if (sideNavBackdrop) sideNavBackdrop.addEventListener('click', closeSideNav);
+
+        // Back to top button
+        const backToTopBtn = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Close modals
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+            });
+        });
+
+        // Close modal on backdrop click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+        });
+
+        // Check login status
+        checkLoginStatus();
+
+        // Load cart from localStorage
+        cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        displayCart();
+
+        // Clear cart button
+        document.querySelector('.btn-clear-cart').addEventListener('click', () => {
+            if (cart.length > 0 && confirm('Are you sure you want to clear all items?')) {
+                cart = [];
+                saveAndUpdateCart();
+            }
+        });
+    });
+
+    function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const userName = localStorage.getItem('userName');
+        const loginLink = document.getElementById('login-link');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        if (isLoggedIn && userName) {
+            if (loginLink) loginLink.style.display = 'none';
+            if (userDropdown) {
+                userDropdown.style.display = 'block';
+                userDropdown.querySelector('.user-name').textContent = userName;
+            }
+        } else {
+            if (loginLink) loginLink.style.display = 'block';
+            if (userDropdown) userDropdown.style.display = 'none';
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userPhone');
+        window.location.href = 'index.html';
+    }
+
+    function showOrderHistory() {
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        const container = document.getElementById('order-history-content');
+
+        if (orders.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #666;">No orders found.</p>';
+        } else {
+            let html = '';
+            orders.reverse().forEach((order, i) => {
+                html += `
+                    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Order #${order.orderNumber}</strong>
+                            <span style="color: #666; font-size: 12px;">${new Date(order.date).toLocaleDateString()}</span>
+                        </div>
+                        <p style="margin: 5px 0; font-size: 14px;">Items: ${order.items.length}</p>
+                        <p style="margin: 5px 0; font-size: 14px; color: #28a745;">Status: Confirmed</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        document.getElementById('order-history-modal').classList.add('active');
+    }
+
+    function displayCart() {
+        const cartItemsContainer = document.querySelector('.cart-items-container');
+        const emptyCartMessage = document.querySelector('.empty-cart-message');
+        const orderContent = document.querySelector('.order-content');
+
+        updateCartCount();
+
+        if (cart.length === 0) {
+            emptyCartMessage.style.display = 'flex';
+            orderContent.style.display = 'none';
+            return;
+        }
+
+        emptyCartMessage.style.display = 'none';
+        orderContent.style.display = 'flex';
+        cartItemsContainer.innerHTML = '';
+
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            const hasDesign = item.design ? true : false;
+            const hasMeasurements = item.hasMeasurements ? true : false;
+            const canAddToCart = hasDesign && hasMeasurements;
+
+            const cartItemEl = document.createElement('div');
+            cartItemEl.classList.add('cart-item');
+            cartItemEl.innerHTML = `
+                <div class="cart-item-image">
+                    <img src="images/${item.image}" alt="${item.name}" onerror="this.src='images/placeholder.jpg'">
+                </div>
+                <div class="cart-item-details">
+                    <h3>${item.name}</h3>
+                    <p class="price">PKR. ${item.price.toLocaleString()}</p>
+                    ${item.design ? `<p class="design-details" style="color: #28a745; font-size: 12px;"><i class="fas fa-check-circle"></i> ${item.design}</p>` : ''}
+                    ${item.hasMeasurements ? `
+                        <div class="measurements-display">
+                            <h5><i class="fas fa-ruler"></i> Measurements Saved
+                                <button onclick="openMeasurementModal(${index})" style="background: none; border: none; color: #d4af37; cursor: pointer; font-size: 12px;"><i class="fas fa-edit"></i> Edit</button>
+                            </h5>
+                        </div>
+                    ` : ''}
+                    <div class="design-btn-group">
+                        <button class="customize-item-btn" onclick="toggleDesignPanel(${index})">
+                            <i class="fas fa-tshirt"></i> ${item.design ? 'Edit Design' : 'Customize Design'}
+                        </button>
+                        <button class="measurement-btn" onclick="openMeasurementModal(${index})">
+                            <i class="fas fa-ruler"></i> ${item.hasMeasurements ? 'Edit' : 'Add'} Measurements
+                        </button>
+                    </div>
+                </div>
+                <div class="cart-item-quantity">
+                    <button class="quantity-btn decrease" onclick="updateQuantity(${index}, -1)">-</button>
+                    <span class="quantity">${item.quantity}</span>
+                    <button class="quantity-btn increase" onclick="updateQuantity(${index}, 1)">+</button>
+                </div>
+                <div class="cart-item-total">
+                    <p>PKR. ${itemTotal.toLocaleString()}</p>
+                    <button class="add-to-cart-btn ${canAddToCart ? '' : 'disabled'}" onclick="addToFinalCart(${index})" ${canAddToCart ? '' : 'disabled'}>
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                <button class="remove-item" onclick="removeItem(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <div class="item-design-container" id="design-container-${index}"></div>
+            `;
+
+            cartItemsContainer.appendChild(cartItemEl);
+        });
+    }
+
+    function updateQuantity(index, change) {
+        if (cart[index].quantity + change >= 1) {
+            cart[index].quantity += change;
+            saveAndUpdateCart();
+        }
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        saveAndUpdateCart();
+    }
+
+    function toggleDesignPanel(index) {
+        const container = document.getElementById(`design-container-${index}`);
+
+        if (container.innerHTML !== '') {
+            container.innerHTML = '';
+            return;
+        }
+
+        const item = cart[index];
+        const designOptions = item.designOptions || {};
+
+        container.innerHTML = `
+            <div class="item-design-options">
+                <div class="design-header">
+                    <h4>Customize Your Design</h4>
+                    <button class="close-design-btn" onclick="document.getElementById('design-container-${index}').innerHTML=''"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div class="design-section">
+                    <h5>Collar Style</h5>
+                    <div class="design-options">
+                        <div class="design-option">
+                            <input type="radio" id="collar-band-${index}" name="collar-${index}" value="Band Collar" ${designOptions.collar === 'Band Collar' ? 'checked' : ''}>
+                            <label for="collar-band-${index}">Band Collar</label>
+                        </div>
+                        <div class="design-option">
+                            <input type="radio" id="collar-straight-${index}" name="collar-${index}" value="Straight Collar" ${designOptions.collar === 'Straight Collar' ? 'checked' : ''}>
+                            <label for="collar-straight-${index}">Straight Collar</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="design-section">
+                    <h5>Kameez Style</h5>
+                    <div class="design-options">
+                        <div class="design-option">
+                            <input type="radio" id="kurta-${index}" name="kurta-${index}" value="Kurta Style" ${designOptions.kurta === 'Kurta Style' ? 'checked' : ''}>
+                            <label for="kurta-${index}">Kurta Style</label>
+                        </div>
+                        <div class="design-option">
+                            <input type="radio" id="simple-${index}" name="kurta-${index}" value="Simple Kameez" ${designOptions.kurta === 'Simple Kameez' ? 'checked' : ''}>
+                            <label for="simple-${index}">Simple Kameez</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="design-section">
+                    <h5>Bottom Style</h5>
+                    <div class="design-options">
+                        <div class="design-option">
+                            <input type="radio" id="shalwar-${index}" name="bottom-${index}" value="Shalwar" ${designOptions.bottom === 'Shalwar' ? 'checked' : ''}>
+                            <label for="shalwar-${index}">Shalwar</label>
+                        </div>
+                        <div class="design-option">
+                            <input type="radio" id="trouser-${index}" name="bottom-${index}" value="Trouser" ${designOptions.bottom === 'Trouser' ? 'checked' : ''}>
+                            <label for="trouser-${index}">Trouser</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="design-section">
+                    <h5>Front Pocket</h5>
+                    <div class="design-options">
+                        <div class="design-option">
+                            <input type="radio" id="fp-yes-${index}" name="fp-${index}" value="With Front Pocket" ${designOptions.frontPocket === 'With Front Pocket' ? 'checked' : ''}>
+                            <label for="fp-yes-${index}">With Pocket</label>
+                        </div>
+                        <div class="design-option">
+                            <input type="radio" id="fp-no-${index}" name="fp-${index}" value="No Front Pocket" ${designOptions.frontPocket === 'No Front Pocket' ? 'checked' : ''}>
+                            <label for="fp-no-${index}">No Pocket</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="design-section">
+                    <h5>Side Pockets</h5>
+                    <div class="design-options">
+                        <div class="design-option">
+                            <input type="radio" id="sp-two-${index}" name="sp-${index}" value="Two Side Pockets" ${designOptions.sidePocket === 'Two Side Pockets' ? 'checked' : ''}>
+                            <label for="sp-two-${index}">Two Pockets</label>
+                        </div>
+                        <div class="design-option">
+                            <input type="radio" id="sp-one-${index}" name="sp-${index}" value="One Side Pocket" ${designOptions.sidePocket === 'One Side Pocket' ? 'checked' : ''}>
+                            <label for="sp-one-${index}">One Pocket</label>
+                        </div>
+                        <div class="design-option">
+                            <input type="radio" id="sp-none-${index}" name="sp-${index}" value="No Side Pockets" ${designOptions.sidePocket === 'No Side Pockets' ? 'checked' : ''}>
+                            <label for="sp-none-${index}">No Pockets</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-confirm-design" onclick="confirmDesign(${index})">Confirm Design</button>
+            </div>
+        `;
+    }
+
+    function confirmDesign(index) {
+        const collar = document.querySelector(`input[name="collar-${index}"]:checked`);
+        const kurta = document.querySelector(`input[name="kurta-${index}"]:checked`);
+        const bottom = document.querySelector(`input[name="bottom-${index}"]:checked`);
+        const frontPocket = document.querySelector(`input[name="fp-${index}"]:checked`);
+        const sidePocket = document.querySelector(`input[name="sp-${index}"]:checked`);
+
+        if (!collar || !kurta || !bottom || !frontPocket || !sidePocket) {
+            alert('Please select all design options');
+            return;
+        }
+
+        const designDescription = `${kurta.value} with ${collar.value}, ${bottom.value}, ${frontPocket.value}, ${sidePocket.value}`;
+
+        cart[index].design = designDescription;
+        cart[index].designOptions = {
+            collar: collar.value,
+            kurta: kurta.value,
+            bottom: bottom.value,
+            frontPocket: frontPocket.value,
+            sidePocket: sidePocket.value
+        };
+
+        saveAndUpdateCart();
+        showToast('Design saved successfully!');
+    }
+
+    function openMeasurementModal(index) {
+        document.getElementById('measurement-item-index').value = index;
+
+        // Pre-fill existing measurements
+        const item = cart[index];
+        if (item.measurements) {
+            document.getElementById('m-chest').value = item.measurements.chest || '';
+            document.getElementById('m-waist').value = item.measurements.waist || '';
+            document.getElementById('m-hip').value = item.measurements.hip || '';
+            document.getElementById('m-shoulder').value = item.measurements.shoulder || '';
+            document.getElementById('m-sleeve').value = item.measurements.sleeve || '';
+            document.getElementById('m-kameez').value = item.measurements.kameez || '';
+            document.getElementById('m-trouser').value = item.measurements.trouser || '';
+            document.getElementById('m-neck').value = item.measurements.neck || '';
+            document.getElementById('m-notes').value = item.measurements.notes || '';
+        } else {
+            // Clear all fields
+            ['m-chest', 'm-waist', 'm-hip', 'm-shoulder', 'm-sleeve', 'm-kameez', 'm-trouser', 'm-neck', 'm-notes'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+        }
+
+        document.getElementById('measurement-modal').classList.add('active');
+    }
+
+    function saveMeasurements() {
+        const index = parseInt(document.getElementById('measurement-item-index').value);
+
+        const chest = document.getElementById('m-chest').value;
+        const waist = document.getElementById('m-waist').value;
+        const hip = document.getElementById('m-hip').value;
+
+        // Require at least 3 measurements
+        let filledCount = 0;
+        ['m-chest', 'm-waist', 'm-hip', 'm-shoulder', 'm-sleeve', 'm-kameez', 'm-trouser', 'm-neck'].forEach(id => {
+            if (document.getElementById(id).value) filledCount++;
+        });
+
+        if (filledCount < 3) {
+            alert('Please enter at least 3 measurements');
+            return;
+        }
+
+        cart[index].measurements = {
+            chest: document.getElementById('m-chest').value,
+            waist: document.getElementById('m-waist').value,
+            hip: document.getElementById('m-hip').value,
+            shoulder: document.getElementById('m-shoulder').value,
+            sleeve: document.getElementById('m-sleeve').value,
+            kameez: document.getElementById('m-kameez').value,
+            trouser: document.getElementById('m-trouser').value,
+            neck: document.getElementById('m-neck').value,
+            notes: document.getElementById('m-notes').value
+        };
+        cart[index].hasMeasurements = true;
+
+        saveAndUpdateCart();
+        document.getElementById('measurement-modal').classList.remove('active');
+        showToast('Measurements saved successfully!');
+    }
+
+    function addToFinalCart(index) {
+        const item = cart[index];
+
+        if (!item.design || !item.hasMeasurements) {
+            alert('Please complete both design and measurements before adding to cart.');
+            return;
+        }
+
+        // Get or create final cart
+        let finalCart = JSON.parse(localStorage.getItem('finalCart')) || [];
+
+        // Check if item already exists in final cart
+        const existingIndex = finalCart.findIndex(ci => ci.id === item.id && ci.design === item.design);
+
+        if (existingIndex >= 0) {
+            finalCart[existingIndex].quantity += item.quantity;
+        } else {
+            finalCart.push({...item});
+        }
+
+        // Save final cart
+        localStorage.setItem('finalCart', JSON.stringify(finalCart));
+
+        // Remove from shopping cart
+        cart.splice(index, 1);
+        saveAndUpdateCart();
+
+        showToast(`${item.name} added to cart!`);
+    }
+
+    function saveAndUpdateCart() {
+        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+        displayCart();
+    }
+
+    function updateCartCount() {
+        const cartCountEl = document.querySelector('.cart-count');
+        const myorderCountEl = document.querySelector('.myorder-count');
+        const shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        const finalCart = JSON.parse(localStorage.getItem('finalCart')) || [];
+
+        // My Order count - items waiting for customization
+        let myOrderTotal = 0;
+        shoppingCart.forEach(item => myOrderTotal += item.quantity || 1);
+        if (myorderCountEl) myorderCountEl.textContent = myOrderTotal;
+
+        // Cart count - only customized items ready for checkout
+        let cartTotal = 0;
+        finalCart.forEach(item => cartTotal += item.quantity || 1);
+        if (cartCountEl) cartCountEl.textContent = cartTotal;
+    }
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    </script>
+</body>
+</html>

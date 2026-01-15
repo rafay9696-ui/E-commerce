@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Stitch House</title>
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="checkout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* My Order Link Styles */
+        .myorder-link {
+            position: relative;
+            margin-right: 15px;
+        }
+        .myorder-link a {
+            color: var(--text-color, #333);
+            font-size: 20px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .myorder-link a:hover { color: var(--gold-color, #d4af37); }
+        .myorder-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #d4af37;
+            color: white;
+            font-size: 10px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-dropdown-btn {
+            display: flex; align-items: center; gap: 8px;
+            background: none; border: none; cursor: pointer;
+            padding: 5px 10px; color: #333;
+        }
+        .user-dropdown-content {
+            display: none; position: absolute; right: 0; top: 100%;
+            background: white; min-width: 160px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px; z-index: 1000; overflow: hidden;
+        }
+        .user-dropdown:hover .user-dropdown-content { display: block; }
+        .user-dropdown-content a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 15px; color: #333; text-decoration: none;
+        }
+        .user-dropdown-content a:hover { background: #f5f5f5; }
+        .user-dropdown-content a i { width: 20px; color: #d4af37; }
+    </style>
+</head>
+<body>
+    <!-- Side Navigation -->
+    <div class="side-nav">
+        <div class="side-nav-content">
+            <div class="side-nav-header">
+                <div class="logo-container">
+                    <h2 class="logo-text">Stitch House</h2>
+                </div>
+                <button class="close-sidenav">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="side-nav-links">
+                <ul>
+                    <li><a href="order.html" class="shop-link"><i class="fas fa-shopping-bag"></i>Shop Now</a></li>
+                    <li><a href="order.html#cotton-section"><i class="fas fa-tshirt"></i>Cotton Fabrics</a></li>
+                    <li><a href="order.html#lattha-section"><i class="fas fa-scroll"></i>Lattha Fabrics</a></li>
+                    <li><a href="order.html#karandi-section"><i class="fas fa-layer-group"></i>Karandi Fabrics</a></li>
+                    <li><a href="order.html#boski-section"><i class="fas fa-square"></i>Boski Fabrics</a></li>
+                    <li><a href="order.html#linen-section"><i class="fas fa-wind"></i>Linen Fabrics</a></li>
+                    <li><a href="order.html#washandwear-section"><i class="fas fa-tshirt"></i>Wash and Wear</a></li>
+                    <li><a href="order.html#silk-section"><i class="fas fa-stream"></i>Silk Fabrics</a></li>
+                    <li><a href="order.html#khaddar-section"><i class="fas fa-border-all"></i>Khaddar Fabrics</a></li>
+                </ul>
+            </div>
+            <div class="side-nav-footer">
+                <div class="social-icons">
+                    <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="side-nav-backdrop"></div>
+
+    <header>
+        <div class="container">
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="site-title">
+                <a href="index.html">
+                    <h1 class="logo-text">Stitch House</h1>
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="order.html" class="nav-link">Shop Now</a></li>
+                    <li><a href="myorder.html" class="nav-link">My Order</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="login-link" id="login-link">
+                    <a href="login.html">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </div>
+                <div class="myorder-link">
+                    <a href="myorder.html" title="My Order">
+                        <i class="fas fa-cut"></i>
+                        <span class="myorder-count">0</span>
+                    </a>
+                </div>
+                <div class="cart-link">
+                    <a href="cart.html" title="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+                <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                    <button class="user-dropdown-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name"></span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown-content">
+                        <a href="myorder.html"><i class="fas fa-tachometer-alt"></i> My Orders</a>
+                        <a href="#" onclick="handleLogout(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>Shopping Cart</h1>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> / <span>Shopping Cart</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section class="cart-section">
+        <div class="container">
+            <div class="cart-container">
+                <!-- Empty cart message -->
+                <div class="empty-cart-message" style="display: none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Your cart is empty</h2>
+                    <p>Browse our collection and add some fabrics to your cart</p>
+                    <a href="order.html" class="btn-primary">Shop Now</a>
+                </div>
+
+                <!-- Cart content -->
+                <div class="cart-content">
+                    <div class="cart-items">
+                        <h2>Cart Items</h2>
+                        <div class="cart-items-container" id="cart-items">
+                            <!-- Cart items will be dynamically added here -->
+                        </div>
+                    </div>
+
+                    <div class="cart-summary">
+                        <h2>Order Summary</h2>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="subtotal">PKR 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <span>PKR 200</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span id="total">PKR 0</span>
+                        </div>
+                        <a href="checkout.html" id="checkout-btn" class="checkout-btn">Proceed to Checkout</a>
+                        <div class="continue-shopping">
+                            <a href="order.html">Continue Shopping</a>
+                        </div>
+                        <button class="btn-clear-cart-small" id="clear-cart" style="margin-top: 15px;">
+                            <i class="fas fa-trash"></i> Clear Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- You might also like section -->
+    <section class="product-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>YOU MIGHT ALSO LIKE</h2>
+                <p>Other popular fabrics from our collection</p>
+            </div>
+            <div class="product-grid">
+                <div class="shop-product-card">
+                    <div class="product-image">
+                        <img src="images/c1.1.jpg" alt="Cotton Fabric">
+                        <div class="product-actions">
+                            <button class="btn-add-to-order" data-id="cotton1" data-name="Premium Cotton - Blue" data-price="1500" data-image="c1.1.jpg">
+                                <i class="fas fa-shopping-cart"></i> Add to Order
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Premium Cotton - Blue</h3>
+                        <div class="product-meta">
+                            <span class="price">PKR 1,500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shop-product-card">
+                    <div class="product-image">
+                        <img src="images/l1.3.jpg" alt="Lattha Fabric">
+                        <div class="product-actions">
+                            <button class="btn-add-to-order" data-id="lattha1" data-name="Premium Lattha - Black" data-price="1500" data-image="l1.3.jpg">
+                                <i class="fas fa-shopping-cart"></i> Add to Order
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Premium Lattha - Black</h3>
+                        <div class="product-meta">
+                            <span class="price">PKR 1,500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shop-product-card">
+                    <div class="product-image">
+                        <img src="images/b1.1.jpg" alt="Boski Fabric">
+                        <div class="product-actions">
+                            <button class="btn-add-to-order" data-id="boski1" data-name="Premium Boski - Brown" data-price="1900" data-image="b1.1.jpg">
+                                <i class="fas fa-shopping-cart"></i> Add to Order
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Premium Boski - Brown</h3>
+                        <div class="product-meta">
+                            <span class="price">PKR 1,900</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shop-product-card">
+                    <div class="product-image">
+                        <img src="images/ln1.1.jpg" alt="Linen Fabric">
+                        <div class="product-actions">
+                            <button class="btn-add-to-order" data-id="linen1" data-name="Premium Linen - Black" data-price="2200" data-image="ln1.1.jpg">
+                                <i class="fas fa-shopping-cart"></i> Add to Order
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Premium Linen - Black</h3>
+                        <div class="product-meta">
+                            <span class="price">PKR 2,200</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <div class="footer-logo">
+                        <a href="index.html" class="logo-button">
+                            <h3 class="logo-text">Stitch House</h3>
+                        </a>
+                    </div>
+                    <p>Your premium destination for high-quality fabrics and exceptional service.</p>
+                    <div class="social-icons">
+                        <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                        <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="order.html">Shop Now</a></li>
+                        <li><a href="myorder.html">My Order</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Main Gulberg, Lahore, Pakistan</p>
+                    <p><i class="fas fa-phone"></i> 0304-2292813</p>
+                    <p><i class="fas fa-envelope"></i> info@stitchhouse.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Stitch House. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cart functionality
+        const cartItemsContainer = document.getElementById('cart-items');
+        const emptyCartMessage = document.querySelector('.empty-cart-message');
+        const cartContent = document.querySelector('.cart-content');
+        const subtotalElement = document.getElementById('subtotal');
+        const totalElement = document.getElementById('total');
+        const clearCartBtn = document.getElementById('clear-cart');
+        const cartCount = document.querySelector('.cart-count');
+
+        // Load cart from localStorage (finalCart contains customized items ready for checkout)
+        let cart = JSON.parse(localStorage.getItem('finalCart')) || [];
+
+        // Check login status
+        checkLoginStatus();
+
+        // Display cart
+        displayCart();
+
+        // Add to order buttons in recommended products
+        const addToOrderBtns = document.querySelectorAll('.btn-add-to-order');
+
+        addToOrderBtns.forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.dataset.id;
+                const name = button.dataset.name;
+                const price = parseFloat(button.dataset.price);
+                const image = button.dataset.image;
+
+                // Check if item already in cart
+                const existingItem = cart.find(item => item.id === id);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: id,
+                        name: name,
+                        price: price,
+                        image: image,
+                        quantity: 1
+                    });
+                }
+
+                // Save to localStorage (items added from recommended go to shoppingCart for customization)
+                let shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+                const existingInShopping = shoppingCart.find(item => item.id === id);
+                if (existingInShopping) {
+                    existingInShopping.quantity += 1;
+                } else {
+                    shoppingCart.push({ id, name, price, image, quantity: 1 });
+                }
+                localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+
+                // Update cart display
+                displayCart();
+
+                // Show notification
+                alert(`${name} added to your cart!`);
+            });
+        });
+
+        // Display cart items
+        function displayCart() {
+            // Update cart count
+            updateCartCount();
+
+            // Check if cart is empty
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'flex';
+                cartContent.style.display = 'none';
+                return;
+            }
+
+            emptyCartMessage.style.display = 'none';
+            cartContent.style.display = 'flex';
+
+            // Clear existing items
+            cartItemsContainer.innerHTML = '';
+
+            // Calculate subtotal
+            let subtotal = 0;
+
+            // Add each item to the cart display
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+
+                const cartItemEl = document.createElement('div');
+                cartItemEl.classList.add('cart-item');
+                cartItemEl.innerHTML = `
+                    <div class="cart-item-image">
+                        <img src="images/${item.image}" alt="${item.name}">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3>${item.name}</h3>
+                        <p class="price">PKR ${item.price.toLocaleString()}</p>
+                        ${item.design ? `<p class="design-details">${item.design}</p>` : ''}
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn decrease" data-index="${index}">-</button>
+                        <span class="quantity">${item.quantity}</span>
+                        <button class="quantity-btn increase" data-index="${index}">+</button>
+                    </div>
+                    <div class="cart-item-total">
+                        PKR ${itemTotal.toLocaleString()}
+                    </div>
+                    <button class="remove-item" data-index="${index}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+
+                cartItemsContainer.appendChild(cartItemEl);
+            });
+
+            // Calculate and display totals
+            const shipping = 200;
+            const total = subtotal + shipping;
+
+            subtotalElement.textContent = `PKR ${subtotal.toLocaleString()}`;
+            totalElement.textContent = `PKR ${total.toLocaleString()}`;
+
+            // Add event listeners to buttons in cart items
+            addCartItemEventListeners();
+        }
+
+        // Add event listeners to cart item buttons
+        function addCartItemEventListeners() {
+            // Quantity decrease buttons
+            document.querySelectorAll('.quantity-btn.decrease').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = parseInt(btn.dataset.index);
+                    if (cart[index].quantity > 1) {
+                        cart[index].quantity--;
+                        saveAndUpdateCart();
+                    }
+                });
+            });
+
+            // Quantity increase buttons
+            document.querySelectorAll('.quantity-btn.increase').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = parseInt(btn.dataset.index);
+                    cart[index].quantity++;
+                    saveAndUpdateCart();
+                });
+            });
+
+            // Remove item buttons
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = parseInt(btn.dataset.index);
+                    cart.splice(index, 1);
+                    saveAndUpdateCart();
+                });
+            });
+        }
+
+        // Update cart count - separate counts for My Order and Cart
+        function updateCartCount() {
+            const myorderCountEl = document.querySelector('.myorder-count');
+            const shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+            const finalCart = JSON.parse(localStorage.getItem('finalCart')) || [];
+
+            // My Order count - items waiting for customization
+            let myOrderTotal = 0;
+            shoppingCart.forEach(item => myOrderTotal += item.quantity || 1);
+            if (myorderCountEl) myorderCountEl.textContent = myOrderTotal;
+
+            // Cart count - only customized items ready for checkout
+            let cartTotal = 0;
+            finalCart.forEach(item => cartTotal += item.quantity || 1);
+            cartCount.textContent = cartTotal;
+        }
+
+        // Save cart and update display
+        function saveAndUpdateCart() {
+            localStorage.setItem('finalCart', JSON.stringify(cart));
+            displayCart();
+        }
+
+        // Clear cart button
+        clearCartBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear your cart?')) {
+                cart = [];
+                saveAndUpdateCart();
+            }
+        });
+
+        // Side navigation functionality
+        const sideNavToggle = document.querySelector('.menu-toggle');
+        const sideNav = document.querySelector('.side-nav');
+        const sideNavBackdrop = document.querySelector('.side-nav-backdrop');
+        const sideNavClose = document.querySelector('.close-sidenav');
+
+        if (sideNavToggle && sideNav) {
+            sideNavToggle.addEventListener('click', () => {
+                sideNav.classList.add('open');
+                sideNavBackdrop.classList.add('active');
+                document.body.classList.add('no-scroll');
+            });
+        }
+
+        function closeSideNav() {
+            if (sideNav) {
+                sideNav.classList.remove('open');
+                sideNavBackdrop.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        if (sideNavClose) sideNavClose.addEventListener('click', closeSideNav);
+        if (sideNavBackdrop) sideNavBackdrop.addEventListener('click', closeSideNav);
+
+        // Back to top button
+        const backToTopBtn = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Image error handling
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('error', function() {
+                if (!this.src.includes('placeholder')) {
+                    const src = this.src;
+                    if (src.endsWith('.jpg')) {
+                        this.src = src.replace('.jpg', '.webp');
+                    } else if (src.endsWith('.webp')) {
+                        this.src = 'images/placeholder.jpg';
+                    } else {
+                        this.src = 'images/placeholder.jpg';
+                    }
+                }
+            });
+        });
+    });
+
+    function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const userName = localStorage.getItem('userName');
+        const loginLink = document.getElementById('login-link');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        if (isLoggedIn && userName) {
+            if (loginLink) loginLink.style.display = 'none';
+            if (userDropdown) {
+                userDropdown.style.display = 'block';
+                userDropdown.querySelector('.user-name').textContent = userName;
+            }
+        } else {
+            if (loginLink) loginLink.style.display = 'block';
+            if (userDropdown) userDropdown.style.display = 'none';
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userPhone');
+        window.location.reload();
+    }
+    </script>
+</body>
+</html>

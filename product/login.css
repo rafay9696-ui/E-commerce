@@ -1,0 +1,353 @@
+/* LOGIN PAGE CSS
+ * Variables are defined in variables.css (Single Source of Truth)
+ * Common styles (header, footer, nav, page-banner, back-to-top) are in styles.css
+ */
+
+/* Login Section */
+.login-section {
+    padding: 0 0 80px;
+}
+
+.login-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--bg-white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium);
+    overflow: hidden;
+}
+
+/* Form Tabs */
+.form-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 20px;
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.tab-btn:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+}
+
+.tab-btn.active:after {
+    width: 100%;
+}
+
+/* Form Content */
+.form-content {
+    padding: 40px;
+}
+
+.form-panel {
+    display: none;
+}
+
+.form-panel.active {
+    display: block;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-panel h2 {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.form-intro {
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    font-size: 15px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: var(--text-muted);
+}
+
+.input-icon-wrapper input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.input-icon-wrapper input:focus {
+    outline: none;
+    border-color: var(--gold-color);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+}
+
+/* Form Options */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
+
+.remember-me, .terms {
+    display: flex;
+    align-items: center;
+}
+
+.remember-me input, .terms input {
+    margin-right: 8px;
+}
+
+.terms {
+    margin: 5px 0;
+}
+
+.forgot-password {
+    color: var(--gold-color);
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.forgot-password:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* Password Strength */
+.password-strength {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.strength-label {
+    color: var(--text-muted);
+    margin-right: 10px;
+}
+
+.strength-meter {
+    height: 5px;
+    background-color: #eee;
+    border-radius: 3px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0;
+    background-color: #ff4d4d;
+    transition: all 0.3s;
+}
+
+/* Login Button */
+.login-section .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-section .btn-primary i {
+    margin-right: 8px;
+}
+
+.login-section .btn-primary:hover {
+    background-color: var(--gold-color);
+}
+
+/* Social Login */
+.social-login {
+    margin-top: 35px;
+    text-align: center;
+}
+
+.social-login p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.social-login p:before,
+.social-login p:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 70px);
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.social-login p:before {
+    left: 0;
+}
+
+.social-login p:after {
+    right: 0;
+}
+
+.social-login-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-social {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: white;
+    color: var(--text-color);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-social i {
+    margin-right: 8px;
+}
+
+.btn-google {
+    color: #DB4437;
+    border-color: #DB4437;
+}
+
+.btn-google:hover {
+    background-color: #DB4437;
+    color: white;
+}
+
+.btn-facebook {
+    color: #4267B2;
+    border-color: #4267B2;
+}
+
+.btn-facebook:hover {
+    background-color: #4267B2;
+    color: white;
+}
+
+/* Login Page Responsive Styles */
+@media (max-width: 768px) {
+    .form-content {
+        padding: 30px 20px;
+    }
+
+    .tab-btn {
+        padding: 15px 10px;
+        font-size: 16px;
+    }
+
+    .social-login-buttons {
+        flex-direction: column;
+    }
+
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .form-panel h2 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-btn {
+        padding: 12px 8px;
+        font-size: 15px;
+    }
+
+    .form-content {
+        padding: 25px 15px;
+    }
+
+    .form-panel h2 {
+        font-size: 22px;
+    }
+
+    .input-icon-wrapper input {
+        padding: 10px 15px 10px 40px;
+        font-size: 15px;
+    }
+
+    .login-section .btn-primary {
+        padding: 12px 15px;
+        font-size: 15px;
+    }
+}

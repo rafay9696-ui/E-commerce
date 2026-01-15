@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stitch House - Premium Fabric Store</title>
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* My Order Link Styles */
+        .myorder-link {
+            position: relative;
+            margin-right: 15px;
+        }
+        .myorder-link a {
+            color: var(--text-color, #333);
+            font-size: 20px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .myorder-link a:hover { color: var(--gold-color, #d4af37); }
+        .myorder-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #d4af37;
+            color: white;
+            font-size: 10px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Side Navigation -->
+    <div class="side-nav">
+        <div class="side-nav-content">
+            <div class="side-nav-header">
+                <div class="logo-container">
+                    <h2 class="logo-text">Stitch House</h2>
+                </div>
+                <button class="close-sidenav">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="side-nav-links">
+                <ul>
+                    <li><a href="order.html" class="shop-link"><i class="fas fa-shopping-bag"></i>Shop Now</a></li>
+                    <li><a href="order.html#cotton-section"><i class="fas fa-tshirt"></i>Cotton Fabrics</a></li>
+                    <li><a href="order.html#lattha-section"><i class="fas fa-scroll"></i>Lattha Fabrics</a></li>
+                    <li><a href="order.html#karandi-section"><i class="fas fa-layer-group"></i>Karandi Fabrics</a></li>
+                    <li><a href="order.html#boski-section"><i class="fas fa-square"></i>Boski Fabrics</a></li>
+                    <li><a href="order.html#linen-section"><i class="fas fa-wind"></i>Linen Fabrics</a></li>
+                    <li><a href="order.html#washandwear-section"><i class="fas fa-tshirt"></i>Wash and Wear</a></li>
+                    <li><a href="order.html#silk-section"><i class="fas fa-stream"></i>Silk Fabrics</a></li>
+                    <li><a href="order.html#khaddar-section"><i class="fas fa-border-all"></i>Khaddar Fabrics</a></li>
+                </ul>
+            </div>
+            <div class="side-nav-footer">
+                <div class="social-icons">
+                    <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="side-nav-backdrop"></div>
+
+    <header>
+        <div class="container">
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="site-title">
+                <a href="index.html">
+                    <h1 class="logo-text">Stitch House</h1>
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="nav-link active">Home</a></li>
+                    <li><a href="order.html" class="nav-link">Shop Now</a></li>
+                    <li><a href="myorder.html" class="nav-link">My Order</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="login-link" id="login-link">
+                    <a href="login.html">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </div>
+                <div class="myorder-link">
+                    <a href="myorder.html" title="My Order">
+                        <i class="fas fa-cut"></i>
+                        <span class="myorder-count">0</span>
+                    </a>
+                </div>
+                <div class="cart-link">
+                    <a href="cart.html" title="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+                <div class="user-info" id="user-info" style="display: none;">
+                    <span class="user-name"></span>
+                    <a href="#" class="logout-link" onclick="handleLogout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Carousel Section -->
+    <section class="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item" style="background-image: url('images/1.jpg')">
+                <div class="carousel-caption clean">
+                    <h2>Premium Quality Fabrics</h2>
+                    <p>Discover our exclusive collection of finest fabrics</p>
+                    <a href="order.html" class="btn-shop-now">Shop Now</a>
+                </div>
+            </div>
+            <div class="carousel-item" style="background-image: url('images/2.jpg')">
+                <div class="carousel-caption clean">
+                    <h2>Handcrafted Excellence</h2>
+                    <p>Every thread tells a story of quality and craftsmanship</p>
+                    <a href="order.html" class="btn-shop-now">Shop Now</a>
+                </div>
+            </div>
+            <div class="carousel-item" style="background-image: url('images/3.jpg')">
+                <div class="carousel-caption clean">
+                    <h2>New Seasonal Collection</h2>
+                    <p>Explore our latest arrivals for this season</p>
+                    <a href="order.html" class="btn-shop-now">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <div class="carousel-control prev"><i class="fas fa-chevron-left"></i></div>
+            <div class="carousel-control next"><i class="fas fa-chevron-right"></i></div>
+        </div>
+    </section>
+
+    <!-- Moving Text Banner -->
+    <section class="moving-text-banner">
+        <div class="moving-text-container">
+            <div class="moving-text gold-text">
+                <span>STITCH HOUSE</span>
+                <i class="fas fa-square"></i>
+                <span>PREMIUM FABRICS</span>
+                <i class="fas fa-square"></i>
+                <span>SUMMER COLLECTION 2025</span>
+                <i class="fas fa-square"></i>
+                <span>STITCH HOUSE</span>
+                <i class="fas fa-square"></i>
+                <span>PREMIUM FABRICS</span>
+                <i class="fas fa-square"></i>
+                <span>SUMMER COLLECTION 2025</span>
+                <i class="fas fa-square"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial Section -->
+    <section class="testimonial-quotes">
+        <div class="container">
+            <div class="quote">
+                <i class="fas fa-quote-left"></i>
+                <p>The finest fabrics from Stitch House have transformed our wardrobe with unmatched quality and elegance. Exceptional craftsmanship and premium materials make Stitch House the ultimate destination for fabric connoisseurs.</p>
+                <i class="fas fa-quote-right"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Fabrics -->
+    <section class="featured-products">
+        <div class="container">
+            <h2>Featured Fabrics</h2>
+            <div class="product-grid">
+                <a href="order.html#cotton-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c1.jpg" alt="Cotton Fabric">
+                    </div>
+                    <div class="product-info">
+                        <h3>COTTON</h3>
+                    </div>
+                </a>
+                <a href="order.html#lattha-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c2.jpg" alt="Lattha Fabric">
+                    </div>
+                    <div class="product-info">
+                        <h3>LATTHA</h3>
+                    </div>
+                </a>
+                <a href="order.html#karandi-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c3.jpg" alt="Karandi Fabric">
+                    </div>
+                    <div class="product-info">
+                        <h3>KARANDI</h3>
+                    </div>
+                </a>
+                <a href="order.html#boski-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c4.jpg" alt="Boski Fabric">
+                    </div>
+                    <div class="product-info">
+                        <h3>BOSKI</h3>
+                    </div>
+                </a>
+                <a href="order.html#linen-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c5.jpg" alt="Linen Fabric">
+                    </div>
+                    <div class="product-info">
+                        <h3>LINEN</h3>
+                    </div>
+                </a>
+                <a href="order.html#washandwear-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c6.jpg" alt="Wash and Wear">
+                    </div>
+                    <div class="product-info">
+                        <h3>WASH AND WEAR</h3>
+                    </div>
+                </a>
+                <a href="order.html#silk-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c7.jpg" alt="Silk Fabric">
+                    </div>
+                    <div class="product-info">
+                        <h3>SILK</h3>
+                    </div>
+                </a>
+                <a href="order.html#khaddar-section" class="product-card">
+                    <div class="product-image">
+                        <img src="images/c8.jpg" alt="Khaddar Fabric">
+                    </div>
+                    <div class="product-info">
+                        <h3>KHADDAR</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="view-all-container">
+                <a href="order.html" class="btn-view-all">View All Products</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <div class="footer-logo">
+                        <a href="index.html" class="logo-button">
+                            <h3 class="logo-text">Stitch House</h3>
+                        </a>
+                    </div>
+                    <p>Your premium destination for high-quality fabrics and exceptional service.</p>
+                    <div class="social-icons">
+                        <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="pinterest"><i class="fab fa-pinterest"></i></a>
+                        <a href="#" class="youtube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="order.html">Shop Now</a></li>
+                        <li><a href="myorder.html">My Order</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Main Gulberg, Lahore, Pakistan</p>
+                    <p><i class="fas fa-phone"></i> 0304-2292813</p>
+                    <p><i class="fas fa-envelope"></i> info@stitchhouse.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Stitch House. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Carousel functionality
+        const carouselInner = document.querySelector('.carousel-inner');
+        const slides = document.querySelectorAll('.carousel-item');
+        const prevBtn = document.querySelector('.carousel-control.prev');
+        const nextBtn = document.querySelector('.carousel-control.next');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        function goToSlide(slideIndex) {
+            if (slideIndex < 0) slideIndex = totalSlides - 1;
+            else if (slideIndex >= totalSlides) slideIndex = 0;
+            currentSlide = slideIndex;
+            carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+        setInterval(() => goToSlide(currentSlide + 1), 5000);
+
+        // Side navigation functionality
+        const sideNavToggle = document.querySelector('.menu-toggle');
+        const sideNav = document.querySelector('.side-nav');
+        const sideNavBackdrop = document.querySelector('.side-nav-backdrop');
+        const sideNavClose = document.querySelector('.close-sidenav');
+
+        if (sideNavToggle && sideNav) {
+            sideNavToggle.addEventListener('click', () => {
+                sideNav.classList.add('open');
+                sideNavBackdrop.classList.add('active');
+                document.body.classList.add('no-scroll');
+            });
+        }
+
+        function closeSideNav() {
+            if (sideNav) {
+                sideNav.classList.remove('open');
+                sideNavBackdrop.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        if (sideNavClose) sideNavClose.addEventListener('click', closeSideNav);
+        if (sideNavBackdrop) sideNavBackdrop.addEventListener('click', closeSideNav);
+
+        // Back to top button
+        const backToTopBtn = document.querySelector('.back-to-top');
+        if (backToTopBtn) {
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Update cart count from localStorage
+        updateCartCount();
+
+        // Check login status
+        checkLoginStatus();
+
+        // Image error handling
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('error', function() {
+                if (!this.src.includes('placeholder')) {
+                    const src = this.src;
+                    if (src.endsWith('.jpg')) {
+                        this.src = src.replace('.jpg', '.webp');
+                    } else if (src.endsWith('.webp')) {
+                        this.src = 'images/placeholder.jpg';
+                    } else {
+                        this.src = 'images/placeholder.jpg';
+                    }
+                }
+            });
+        });
+    });
+
+    function updateCartCount() {
+        const cartCountEl = document.querySelector('.cart-count');
+        const myorderCountEl = document.querySelector('.myorder-count');
+        const shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        const finalCart = JSON.parse(localStorage.getItem('finalCart')) || [];
+
+        // My Order count - items waiting for customization
+        let myOrderTotal = 0;
+        shoppingCart.forEach(item => myOrderTotal += item.quantity || 1);
+        if (myorderCountEl) myorderCountEl.textContent = myOrderTotal;
+
+        // Cart count - only customized items ready for checkout
+        let cartTotal = 0;
+        finalCart.forEach(item => cartTotal += item.quantity || 1);
+        if (cartCountEl) cartCountEl.textContent = cartTotal;
+    }
+
+    function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const userName = localStorage.getItem('userName');
+        const loginLink = document.getElementById('login-link');
+        const userInfo = document.getElementById('user-info');
+
+        if (isLoggedIn && userName) {
+            if (loginLink) loginLink.style.display = 'none';
+            if (userInfo) {
+                userInfo.style.display = 'flex';
+                userInfo.querySelector('.user-name').textContent = userName;
+            }
+        } else {
+            if (loginLink) loginLink.style.display = 'block';
+            if (userInfo) userInfo.style.display = 'none';
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userPhone');
+        window.location.reload();
+    }
+    </script>
+</body>
+</html>

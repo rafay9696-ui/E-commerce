@@ -1,0 +1,144 @@
+/* MediaPipe Pose Styles */
+.body-part-highlight {
+    transition: all 0.3s ease;
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border: 2px solid #45a049 !important;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+.measurement-detected {
+    background-color: #e8f5e9 !important;
+    border-left: 4px solid #4CAF50 !important;
+}
+
+.pose-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 8px;
+}
+
+.measurement-progress {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: white;
+    border: 1px solid #e9ecef;
+}
+
+.progress-item.completed {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-left: 4px solid #4CAF50;
+    transform: translateX(5px);
+}
+
+.progress-icon {
+    margin-right: 12px;
+    width: 25px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.camera-section {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.measurement-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.webcam-btn {
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.webcam-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.measurement-value {
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.pose-indicator {
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.pose-indicator.success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%) !important;
+    border-left-color: #28a745 !important;
+    color: #155724 !important;
+}
+
+.pose-indicator.waiting {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%) !important;
+    border-left-color: #ffc107 !important;
+    color: #856404 !important;
+}
+
+.pose-indicator.error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%) !important;
+    border-left-color: #dc3545 !important;
+    color: #721c24 !important;
+}
+
+#webcam-video {
+    border-radius: 12px;
+}

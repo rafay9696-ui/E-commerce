@@ -1,0 +1,47 @@
+/**
+ * Stitch House - CSS Variables (Single Source of Truth)
+ * Theme: Black, White, Gold (#d4af37)
+ * Fonts: Playfair Display (headers), Montserrat (body), Dancing Script (logo)
+ *
+ * IMPORTANT: This is the ONLY file that should contain :root variables.
+ * All other CSS files should use var(--variable-name) to reference these.
+ */
+
+:root {
+    /* Primary Colors */
+    --primary-color: #000000;
+    --primary-dark: #0a0a0a;
+    --accent-color: #333333;
+    --dark-color: #0a0a0a;
+
+    /* Gold Accent - OFFICIAL BRAND COLOR */
+    --gold-color: #d4af37;
+
+    /* Background Colors */
+    --bg-light: #ffffff;
+    --bg-dark: #0a0a0a;
+    --bg-gray: #f5f5f5;
+    --bg-white: #ffffff;
+    --light-color: #f5f5f5;
+
+    /* Text Colors */
+    --text-color: #1a1a1a;
+    --text-light: #ffffff;
+    --text-muted: #666666;
+
+    /* Border & Shadow */
+    --border-color: #e0e0e0;
+    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --shadow-dark: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+    /* Fonts */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Montserrat', sans-serif;
+    --font-logo: 'Dancing Script', cursive;
+
+    /* Status Colors */
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+}
